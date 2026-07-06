@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@import "shanty-ui/css/shanty-ui.css";
+@import "shanty-ui/css/themes/default.css";
+
+@source "./routes/";
+@source "./okaeri/";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+	--color-lanne: #a6bf7c;
+}
