@@ -1,4 +1,4 @@
-import { haGet } from "./ha-client";
+import { HaClient } from "./ha-client";
 import { useHaStore } from "./ha-store";
 import type { HaEntity } from "./ha-types";
 
@@ -6,7 +6,7 @@ const HA_WS_URL = import.meta.env.VITE_HA_WS_URL;
 const HA_TOKEN = import.meta.env.VITE_HA_TOKEN;
 
 export async function initHomeAssistantWebSocket() {
-	const states = await haGet<HaEntity[]>("states");
+	const states = await new HaClient().getStates();
 	useHaStore.getState().setEntities(states);
 
 	const socket = new WebSocket(HA_WS_URL);

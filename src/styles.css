@@ -1,13 +1,22 @@
 @import "tailwindcss";
 
 @import "shanty-ui/css/shanty-ui.css";
-@import "shanty-ui/css/themes/default.css";
+
+@import "okaeri/app/themes/morning.css";
+@import "okaeri/app/themes/day.css";
+@import "okaeri/app/themes/evening.css";
+@import "okaeri/app/themes/night.css";
 
 @source "./routes/";
 @source "./okaeri/";
 
 @custom-variant dark (&:is(.dark *));
 
-@theme {
-	--color-lanne: #a6bf7c;
+@theme inline {
+	--color-energy: var(--energy);
+	--color-temperature: var(--temperature);
+	--color-humidity: var(--humidity);
+	--color-network: var(--network);
+	--color-security: var(--security);
+	--color-automation: var(--automation);
 }

@@ -1,2 +1,3 @@
-export { LightService } from "./lighting";
-export type { DomoLightBulb, DomoLightGroup } from "./lighting";
+export * from "./core/events";
+export * from "./lighting";
+export * from "./sun";

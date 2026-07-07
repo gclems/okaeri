@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 
 import type { DomoLightGroup } from "#/domo/lighting/lighting.types";
 
-function LightGroupCard({ group }: { group: DomoLightGroup }) {
+function DashboardLightGroupCard({ group }: { group: DomoLightGroup }) {
 	return (
 		<button
 			type="button"
@@ -57,4 +57,4 @@ function LightGroupCard({ group }: { group: DomoLightGroup }) {
 	);
 }
 
-export { LightGroupCard };
+export { DashboardLightGroupCard };
