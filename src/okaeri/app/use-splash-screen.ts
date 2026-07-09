@@ -1,8 +1,8 @@
 // src/features/splashscreen/splashscreen-store.ts
 import { useEffect, useState } from "react";
 
-const TRANSITION_DURATION = 2;
-const VISIBILITY_DURATION = 1.4;
+const TRANSITION_DURATION = 0.5;
+const VISIBILITY_DURATION = 0.5;
 
 export const useSplashscreen = () => {
 	const [visible, setVisible] = useState(true);

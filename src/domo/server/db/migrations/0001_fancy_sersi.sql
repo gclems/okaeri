@@ -1,0 +1,1 @@
+ALTER TABLE `room` ADD `color` text NOT NULL;

@@ -1,6 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import { HomeIcon, Lightbulb, ThermometerIcon } from "lucide-react";
-import { Separator, Sidebar, cn, useSidebar } from "shanty-ui";
+import {
+	HomeIcon,
+	LandmarkIcon,
+	Lightbulb,
+	SunSnowIcon,
+	ThermometerIcon,
+} from "lucide-react";
+import { Separator, Sidebar, Tooltip, cn, useSidebar } from "shanty-ui";
 
 function AppSidebar() {
 	const sidebar = useSidebar();
@@ -20,20 +26,40 @@ function AppSidebar() {
 				</button>
 				<Separator className="my-4 bg-border" />
 				<div
-					className={cn("w-full flex flex-col", {
+					className={cn("w-full flex flex-col flex-1", {
 						"items-center": !sidebar.open,
 					})}
 				>
-					<Sidebar.Item render={<Link to="/" />}>
-						<HomeIcon /> Accueil
-					</Sidebar.Item>
+					<Tooltip content="Dashboard">
+						<Sidebar.Item render={<Link to="/" />}>
+							<HomeIcon /> Dashboard
+						</Sidebar.Item>
+					</Tooltip>
 					<Separator className="bg-border my-4" />
-					<Sidebar.Item render={<Link to="/lighting" />}>
-						<Lightbulb /> Éclairage
-					</Sidebar.Item>
-					<Sidebar.Item render={<Link to="/comfort" />}>
-						<ThermometerIcon /> Confort
-					</Sidebar.Item>
+					<Tooltip content="Éclairage">
+						<Sidebar.Item render={<Link to="/lighting" />}>
+							<Lightbulb /> Éclairage
+						</Sidebar.Item>
+					</Tooltip>
+					<Tooltip content="Confort">
+						<Sidebar.Item render={<Link to="/comfort" />}>
+							<ThermometerIcon /> Confort
+						</Sidebar.Item>
+					</Tooltip>
+					<Tooltip content="Conditions météo">
+						<Sidebar.Item render={<Link to="/weather" />}>
+							<SunSnowIcon /> Conditions météo
+						</Sidebar.Item>
+					</Tooltip>
+
+					<Separator className="bg-border my-4" />
+
+					<Tooltip content="Architecte">
+						<Sidebar.Item render={<Link to="/settings/home-architect" />}>
+							<LandmarkIcon />
+							Architecte
+						</Sidebar.Item>
+					</Tooltip>
 				</div>
 			</Sidebar.Content>
 		</Sidebar>

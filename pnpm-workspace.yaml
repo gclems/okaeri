@@ -1,0 +1,8 @@
+# pnpm-workspace.yaml
+allowBuilds:
+  better-sqlite3: true
+  core-js-pure: true
+  esbuild: true
+  lightningcss: true
+minimumReleaseAgeExclude:
+  - shanty-ui@2.0.0-alpha.35 || 2.0.0-alpha.36

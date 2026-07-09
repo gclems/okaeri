@@ -10,43 +10,43 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiRealtimeRouteImport } from './routes/api/realtime'
+import { Route as SettingsHomeArchitectRouteImport } from './routes/settings/home-architect'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiRealtimeRoute = ApiRealtimeRouteImport.update({
-  id: '/api/realtime',
-  path: '/api/realtime',
+const SettingsHomeArchitectRoute = SettingsHomeArchitectRouteImport.update({
+  id: '/settings/home-architect',
+  path: '/settings/home-architect',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/api/realtime': typeof ApiRealtimeRoute
+  '/settings/home-architect': typeof SettingsHomeArchitectRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/api/realtime': typeof ApiRealtimeRoute
+  '/settings/home-architect': typeof SettingsHomeArchitectRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/api/realtime': typeof ApiRealtimeRoute
+  '/settings/home-architect': typeof SettingsHomeArchitectRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/realtime'
+  fullPaths: '/' | '/settings/home-architect'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/realtime'
-  id: '__root__' | '/' | '/api/realtime'
+  to: '/' | '/settings/home-architect'
+  id: '__root__' | '/' | '/settings/home-architect'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ApiRealtimeRoute: typeof ApiRealtimeRoute
+  SettingsHomeArchitectRoute: typeof SettingsHomeArchitectRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -58,11 +58,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/realtime': {
-      id: '/api/realtime'
-      path: '/api/realtime'
-      fullPath: '/api/realtime'
-      preLoaderRoute: typeof ApiRealtimeRouteImport
+    '/settings/home-architect': {
+      id: '/settings/home-architect'
+      path: '/settings/home-architect'
+      fullPath: '/settings/home-architect'
+      preLoaderRoute: typeof SettingsHomeArchitectRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -70,7 +70,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ApiRealtimeRoute: ApiRealtimeRoute,
+  SettingsHomeArchitectRoute: SettingsHomeArchitectRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

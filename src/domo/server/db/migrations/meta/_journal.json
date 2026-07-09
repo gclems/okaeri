@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1783780427937,
+      "tag": "0000_brown_korvac",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1783781075964,
+      "tag": "0001_fancy_sersi",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1783781188768,
+      "tag": "0002_safe_maggott",
+      "breakpoints": true
+    }
+  ]
+}

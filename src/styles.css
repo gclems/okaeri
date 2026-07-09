@@ -12,7 +12,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/** TAILWINDCSS */
 @theme inline {
+	--font-sans: "Inter", sans-serif;
+	--font-heading: "Manrope", sans-serif;
+	--font-mono: "JetBrains Mono", monospace;
+
 	--color-energy: var(--energy);
 	--color-temperature: var(--temperature);
 	--color-humidity: var(--humidity);
@@ -21,6 +26,26 @@
 	--color-automation: var(--automation);
 }
 
+@utility text-heading {
+	font-family: var(--font-heading);
+	font-weight: 700;
+	letter-spacing: -0.02em;
+}
+
+@utility text-metric {
+	font-family: var(--font-mono);
+	font-variant-numeric: tabular-nums;
+	letter-spacing: -0.03em;
+}
+
+body {
+	@apply font-sans text-base text-foreground;
+}
+
 [data-slot="sidebar-item-button"] {
 	@apply bg-surface! hover:bg-background!;
+}
+
+[data-slot="card-title"] {
+	@apply text-heading;
 }

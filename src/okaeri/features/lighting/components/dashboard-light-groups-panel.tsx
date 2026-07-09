@@ -1,15 +1,28 @@
+import { useEffect, useState } from "react";
+
 import { faLightbulb, faPowerOff } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Card } from "shanty-ui";
 
-export function DashboardLightGroupsPanel() {
-	// const groupsIds = useLightingStore((state) => state.groups);
+import { getLightingSnapshot } from "@/domo/server/lighting/lighting-functions";
+import type { LightingSnapshot } from "@/domo/shared/lighting";
 
-	// const groups = useMemo(() => {
-	// 	return Object.values(groupsIds);
-	// }, [groupsIds]);
+import { DashboardLightGroupCard } from "./dashboard-light-group-card";
+
+export function DashboardLightGroupsPanel() {
+	const [snapshot, setSnapshot] = useState<LightingSnapshot | null>(null);
+
+	useEffect(() => {
+		const load = async () => {
+			setSnapshot(await getLightingSnapshot());
+		};
+
+		load();
+	}, []);
 
 	async function turnOffAllLights() {}
+
+	const groups = Object.values(snapshot?.lightGroups || {});
 
 	return (
 		<Card>
@@ -24,11 +37,21 @@ export function DashboardLightGroupsPanel() {
 				}
 			/>
 			<Card.Body>
+				<div>
+					<Button
+						onClick={async () => {
+							const nextSnaps = await getLightingSnapshot();
+							setSnapshot(nextSnaps);
+							console.log("nextSnaps", nextSnaps);
+						}}
+					>
+						Update
+					</Button>
+				</div>
 				<div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-					<div className="size-20 bg-primary rounded-md" />
-					{/* {groups.map((group) => (
-						<DashboardLightGroupCard key={group.entityId} group={group} />
-					))} */}
+					{groups.map((group) => (
+						<DashboardLightGroupCard key={group.id} group={group} />
+					))}
 				</div>
 			</Card.Body>
 			<Card.Footer>

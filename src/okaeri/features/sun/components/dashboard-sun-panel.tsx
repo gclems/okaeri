@@ -20,11 +20,11 @@ function DashboardSunPanel() {
 						<div className="flex flex-col items-center">
 							<Separator orientation="vertical" className="h-4 bg-border" />
 						</div>
-						<div className="flex flex-col items-center">
+						<div className="flex flex-col items-center gap-y-1">
 							<div className="text-muted">
 								<SunriseIcon size="0.9rem" />
 							</div>
-							<div className="text-xs">
+							<div className="text-metric text-xs">
 								{sun?.sunrise
 									? new Date(sun.sunrise).toLocaleTimeString([], {
 											hour: "2-digit",
@@ -36,11 +36,11 @@ function DashboardSunPanel() {
 						<div className="flex flex-col items-center">
 							<Separator orientation="vertical" className="h-4 bg-border" />
 						</div>
-						<div className="flex flex-col items-center">
+						<div className="flex flex-col items-center gap-y-1">
 							<div className="text-muted">
 								<SunIcon size="0.9rem" />
 							</div>
-							<div className="text-xs">
+							<div className="text-metric text-xs">
 								{sun?.noon
 									? new Date(sun.noon).toLocaleTimeString([], {
 											hour: "2-digit",
@@ -52,11 +52,11 @@ function DashboardSunPanel() {
 						<div className="flex flex-col items-center">
 							<Separator orientation="vertical" className="h-4 bg-border" />
 						</div>
-						<div className="flex flex-col items-center">
+						<div className="flex flex-col items-center gap-y-1">
 							<div className="text-muted">
 								<SunsetIcon size="0.9rem" />
 							</div>
-							<div className="text-xs">
+							<div className="text-metric text-xs">
 								{sun?.sunset
 									? new Date(sun.sunset).toLocaleTimeString([], {
 											hour: "2-digit",
