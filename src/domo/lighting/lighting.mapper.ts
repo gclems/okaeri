@@ -12,7 +12,7 @@ export function isLightGroupEntity(entity: HaEntity): entity is LightEntity {
 	);
 }
 
-export function mapHaLightToDomoLight(entity: HaEntity): DomoLightBulb {
+export function mapHaLightToDomoLight(entity: LightEntity): DomoLightBulb {
 	const brightness =
 		typeof entity.attributes.brightness === "number"
 			? Math.round((entity.attributes.brightness / 255) * 100)
@@ -37,7 +37,7 @@ export function mapHaLightToDomoLight(entity: HaEntity): DomoLightBulb {
 	};
 }
 
-export function mapHaLightToDomoGroup(entity: HaEntity): DomoLightGroup {
+export function mapHaLightToDomoGroup(entity: LightEntity): DomoLightGroup {
 	const brightness =
 		typeof entity.attributes.brightness === "number"
 			? Math.round((entity.attributes.brightness / 255) * 100)

@@ -20,3 +20,7 @@
 	--color-security: var(--security);
 	--color-automation: var(--automation);
 }
+
+[data-slot="sidebar-item-button"] {
+	@apply bg-surface! hover:bg-background!;
+}

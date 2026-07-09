@@ -7,10 +7,10 @@
 	--radius-lg: calc(var(--radius-base) * 1.5);
 	--radius-xl: calc(var(--radius-base) * 2);
 
-	--background: oklch(98.6% 0.01 235);
-	--surface: oklch(99.4% 0.006 235);
-	--foreground: oklch(24% 0.02 255);
-	--border: oklch(92% 0.015 235);
+	--background: oklch(0.963 0.0182 70.24);
+	--surface: oklch(0.9731 0.0141 74.43);
+	--foreground: oklch(0.2705 0.0039 308.3);
+	--border: oklch(0.9097 0.0104 67.69);
 
 	--tooltip: oklch(0.1985 0.0123 353.84);
 	--tooltip-foreground: oklch(0.6956 0 353.84);
@@ -20,35 +20,35 @@
 	--input-placeholder: oklch(55.648% 0.0126 274.738);
 	--input-border: oklch(0.4349 0.0296 276.66);
 
-	--modal: oklch(0.9576 0.0016 278.71);
-	--modal-foreground: oklch(0.2341 0.0186 107.75);
+	--modal: oklch(0.9731 0.0141 74.43);
+	--modal-foreground: oklch(0.2705 0.0039 308.3);
 
-	--muted: oklch(0.2341 0.0186 107.75 50%);
-	--muted-foreground: oklch(48% 0.015 255);
+	--muted: oklch(0.6814 0.0045 301.39);
+	--muted-foreground: oklch(0.6814 0.0045 301.39);
 
 	--accent: oklch(95% 0.025 95);
 	--accent-foreground: oklch(0.2341 0.0186 107.75);
 
-	--primary: oklch(78% 0.17 85);
-	--primary-foreground: oklch(100% 0 0);
+	--primary: oklch(0.8182 0.1299 131.44);
+	--primary-foreground: oklch(0.2705 0.0039 308.3);
 
-	--secondary: oklch(72% 0.1 235);
-	--secondary-foreground: oklch(100% 0 0);
+	--secondary: oklch(0.7217 0.0819 260.85);
+	--secondary-foreground: oklch(0.2705 0.0039 308.3);
 
 	--neutral: oklch(0.6956 0 353.84);
 	--neutral-foreground: oklch(0.1985 0.0123 353.84);
 
-	--success: oklch(73% 0.15 145);
-	--success-foreground: oklch(100% 0 0);
+	--success: oklch(0.7426 0.1053 152.33);
+	--success-foreground: oklch(0.2705 0.0039 308.3);
 
-	--info: oklch(68% 0.14 245);
-	--info-foreground: oklch(1 0 0);
+	--info: oklch(0.7268 0.1347 272.36);
+	--info-foreground: oklch(0.2705 0.0039 308.3);
 
-	--warning: oklch(78% 0.16 70);
-	--warning-foreground: oklch(1 0 0);
+	--warning: oklch(0.8455 0.1485 94.12);
+	--warning-foreground: oklch(0.2705 0.0039 308.3);
 
-	--destructive: oklch(62% 0.21 28);
-	--destructive-foreground: oklch(100% 0 0);
+	--destructive: oklch(0.6534 0.2111 30.92);
+	--destructive-foreground: oklch(0.2705 0.0039 308.3);
 
 	--energy: oklch(77% 0.17 85);
 	--temperature: oklch(70% 0.15 35);
