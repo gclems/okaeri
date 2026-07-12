@@ -7,15 +7,11 @@ import { ShantyRoot } from "shanty-ui";
 import { useTheme } from "./themes/use-theme";
 
 export function AppProviders({ children }: { children: ReactNode }) {
-	// const [queryClient] = useState(() => new QueryClient());
-
 	useTheme();
 
 	return (
-		// <QueryClientProvider client={queryClient}>
-		<ShantyRoot toast tooltip sidebar>
+		<ShantyRoot toast tooltip sidebar={{ defaultOpen: false }}>
 			{children}
 		</ShantyRoot>
-		// </QueryClientProvider>
 	);
 }
