@@ -1,51 +1,81 @@
-import type { AreaRegistryEntry, HomeAssistantArea } from "#/shared/registry";
+import type {
+	HassAreaRegistryEntry,
+	HassDeviceRegistryEntry,
+	HassEntityRegistryEntry,
+} from "#/shared/hass-registry-types";
 
 import type { HomeAssistantClient } from "../home-assistant-client";
-import { mapHomeAssistantArea } from "./registry-mapper";
+
+export type ResolvedEntityRegistry = {
+	entity: HassEntityRegistryEntry | null;
+	device: HassDeviceRegistryEntry | null;
+	area: HassAreaRegistryEntry | null;
+};
 
 export class RegistryService {
-	private areas: HomeAssistantArea[] | null = null;
-	private areasPromise: Promise<HomeAssistantArea[]> | null = null;
-	private areasLoadedAt = 0;
+	private entities = new Map<string, HassEntityRegistryEntry>();
+	private devices = new Map<string, HassDeviceRegistryEntry>();
+	private areas = new Map<string, HassAreaRegistryEntry>();
 
 	public constructor(private readonly homeAssistant: HomeAssistantClient) {}
 
-	public async getAreas({
-		refresh = false,
-	}: {
-		refresh?: boolean;
-	} = {}): Promise<HomeAssistantArea[]> {
-		const expired = Date.now() - this.areasLoadedAt > 5 * 60_000;
+	public async load(): Promise<void> {
+		const [entities, devices, areas] = await Promise.all([
+			this.homeAssistant.sendCommand<HassEntityRegistryEntry[]>({
+				type: "config/entity_registry/list",
+			}),
 
-		if (!refresh && !expired && this.areas !== null) {
-			return this.areas;
-		}
+			this.homeAssistant.sendCommand<HassDeviceRegistryEntry[]>({
+				type: "config/device_registry/list",
+			}),
 
-		if (this.areasPromise) {
-			return this.areasPromise;
-		}
+			this.homeAssistant.sendCommand<HassAreaRegistryEntry[]>({
+				type: "config/area_registry/list",
+			}),
+		]);
 
-		this.areasPromise = this.fetchAreas()
-			.then((areas) => {
-				this.areas = areas;
-				this.areasLoadedAt = Date.now();
+		this.entities = new Map(entities.map((entity) => [entity.entity_id, entity]));
 
-				return areas;
-			})
-			.finally(() => {
-				this.areasPromise = null;
-			});
+		this.devices = new Map(devices.map((device) => [device.id, device]));
 
-		return this.areasPromise;
+		this.areas = new Map(areas.map((area) => [area.area_id, area]));
 	}
 
-	private async fetchAreas(): Promise<HomeAssistantArea[]> {
-		const response = await this.homeAssistant.sendCommand<unknown>({
-			type: "config/area_registry/list",
-		});
+	public getEntities(): Map<string, HassEntityRegistryEntry> {
+		return this.entities;
+	}
 
-		return Array.isArray(response)
-			? response.map((area) => mapHomeAssistantArea(area as AreaRegistryEntry))
-			: [];
+	public getDevices(): Map<string, HassDeviceRegistryEntry> {
+		return this.devices;
+	}
+
+	public getAreas(): Map<string, HassAreaRegistryEntry> {
+		return this.areas;
+	}
+
+	resolveEntity(entityId: string): ResolvedEntityRegistry {
+		const entity = this.entities.get(entityId) ?? null;
+
+		if (!entity) {
+			return {
+				entity: null,
+				device: null,
+				area: null,
+			};
+		}
+
+		const device = entity.device_id
+			? (this.devices.get(entity.device_id) ?? null)
+			: null;
+
+		const resolvedAreaId = entity.area_id ?? device?.area_id ?? null;
+
+		const area = resolvedAreaId ? (this.areas.get(resolvedAreaId) ?? null) : null;
+
+		return {
+			entity,
+			device,
+			area,
+		};
 	}
 }

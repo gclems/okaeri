@@ -1,14 +1,14 @@
 import { create } from "zustand";
 
-import type { LightingSnapshot } from "#/shared/lighting";
+import type { DomoLightingSnapshot } from "#/shared/lighting-types";
 
 type ConnectionState = "idle" | "connecting" | "connected" | "error";
 
 interface LightingState {
-	snapshot: LightingSnapshot | null;
+	snapshot: DomoLightingSnapshot | null;
 	connectionState: ConnectionState;
 
-	setSnapshot: (snapshot: LightingSnapshot) => void;
+	setSnapshot: (snapshot: DomoLightingSnapshot) => void;
 	setConnectionState: (state: ConnectionState) => void;
 }
 

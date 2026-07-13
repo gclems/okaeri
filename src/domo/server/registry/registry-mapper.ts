@@ -1,4 +1,7 @@
-import type { AreaRegistryEntry, HomeAssistantArea } from "#/shared/registry";
+import type {
+	AreaRegistryEntry,
+	HomeAssistantArea,
+} from "#/shared/hass-registry-types";
 
 export function mapHomeAssistantArea(
 	entity: AreaRegistryEntry,

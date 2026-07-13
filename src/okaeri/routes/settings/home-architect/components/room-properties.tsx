@@ -37,18 +37,18 @@ function RoomProperties() {
 
 	const areasOptions = [
 		{
-			value: null,
+			value: "",
 			label: "Aucune",
 		},
 		...haAreas.map((area) => ({
-			value: area.id,
+			value: area.area_id,
 			label: area.name,
 		})),
 	];
 
 	const selectedAreaOption = selectedRoom?.haRoomId
 		? areasOptions.find((option) => option.value === selectedRoom.haRoomId)
-		: null;
+		: areasOptions[0];
 
 	return (
 		<Card className="w-60">

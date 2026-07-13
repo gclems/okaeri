@@ -14,6 +14,7 @@ export interface HomeAssistantClientOptions {
 }
 
 export interface HomeAssistantClientListener {
+	onConnectionReady(): Promise<void>;
 	onConnected(): void;
 	onDisconnected(): void;
 	onEntitiesChanged(entities: HassEntities): void;
@@ -31,7 +32,7 @@ export class HomeAssistantClient {
 		private readonly listener: HomeAssistantClientListener,
 	) {}
 
-	public connect(): Promise<void> {
+	public connect(beforeSubscribe?: () => Promise<void>): Promise<void> {
 		if (this.initialized) {
 			return Promise.resolve();
 		}
@@ -40,7 +41,7 @@ export class HomeAssistantClient {
 			return this.connectPromise;
 		}
 
-		this.connectPromise = this.createConnection()
+		this.connectPromise = this.createConnection(beforeSubscribe)
 			.catch((error) => {
 				this.connection = null;
 				this.initialized = false;
@@ -82,7 +83,7 @@ export class HomeAssistantClient {
 		return connection.sendMessagePromise<TResult>(message);
 	}
 
-	private getConnection(): Connection {
+	public getConnection(): Connection {
 		if (!this.connection) {
 			throw new Error("Home Assistant connection is not available.");
 		}
@@ -111,7 +112,9 @@ export class HomeAssistantClient {
 		await initialEntitiesPromise;
 	}
 
-	private async createConnection(): Promise<void> {
+	private async createConnection(
+		beforeSubscribe?: () => Promise<void>,
+	): Promise<void> {
 		try {
 			const auth = createLongLivedTokenAuth(this.options.url, this.options.token);
 
@@ -123,6 +126,8 @@ export class HomeAssistantClient {
 				this.initialized = false;
 				this.listener.onDisconnected();
 			});
+
+			await beforeSubscribe?.();
 
 			await this.waitForInitialEntities(connection);
 

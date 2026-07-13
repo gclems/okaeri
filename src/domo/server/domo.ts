@@ -4,13 +4,16 @@ import type {
 	MessageBase,
 } from "home-assistant-js-websocket";
 
-import type { DomoEntityState, DomoSnapshot } from "../shared/home-assistant";
 import {
 	HomeAssistantClient,
 	type HomeAssistantClientOptions,
-} from "./home-assistant-client";
-import { LightingService } from "./lighting/lighting-service";
-import { RegistryService } from "./registry/registry-service";
+} from "#/server/home-assistant-client";
+import { LightingService } from "#/server/lighting/lighting-service";
+import { RegistryService } from "#/server/registry/registry-service";
+import type {
+	DomoEntityState,
+	DomoSnapshot,
+} from "#/shared/home-assistant-types";
 
 export type DomoListener = (snapshot: DomoSnapshot) => void;
 
@@ -32,6 +35,10 @@ export class Domo {
 
 	public constructor(options: HomeAssistantClientOptions) {
 		this.homeAssistant = new HomeAssistantClient(options, {
+			onConnectionReady: async () => {
+				await this.registry.load();
+			},
+
 			onConnected: () => {
 				this.updateSnapshot({
 					connectionState: "connected",
@@ -39,7 +46,7 @@ export class Domo {
 				});
 			},
 
-			onDisconnected: () => {
+			onDisconnected: async () => {
 				this.updateSnapshot({
 					connectionState: "disconnected",
 				});
@@ -59,11 +66,11 @@ export class Domo {
 			},
 		});
 
-		this.lighting = new LightingService(this.homeAssistant);
 		this.registry = new RegistryService(this.homeAssistant);
+		this.lighting = new LightingService(this.homeAssistant, this.registry);
 	}
 
-	public start(): Promise<void> {
+	public async start(): Promise<void> {
 		if (this.snapshot.connectionState === "connected") {
 			return Promise.resolve();
 		}
@@ -77,9 +84,13 @@ export class Domo {
 			error: null,
 		});
 
-		this.startPromise = this.homeAssistant.connect().finally(() => {
-			this.startPromise = null;
-		});
+		this.startPromise = this.homeAssistant
+			.connect(async () => {
+				await this.registry.load();
+			})
+			.finally(() => {
+				this.startPromise = null;
+			});
 
 		return this.startPromise;
 	}

@@ -10,14 +10,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { persistRooms } from "#/server/architect/room-functions";
 import type { Room } from "#/shared/architect/architect-types";
-import type { HomeAssistantArea } from "#/shared/registry";
+import type { HassAreaRegistryEntry } from "#/shared/hass-registry-types";
 import { roomsQueryOptions } from "@/features/architect/use-rooms";
 
 interface HomeArchitectContext {
 	selectedRoom: Room | null;
 	rooms: Record<string, Room>;
 
-	haAreas: HomeAssistantArea[];
+	haAreas: HassAreaRegistryEntry[];
 
 	changed: boolean;
 
@@ -39,7 +39,7 @@ export function HomeArchitectProvider({
 	children,
 }: {
 	defaultRooms: Room[];
-	haAreas: HomeAssistantArea[];
+	haAreas: HassAreaRegistryEntry[];
 	children: React.ReactNode;
 }) {
 	const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);

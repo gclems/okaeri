@@ -1,7 +1,14 @@
 import type { HassEntities } from "home-assistant-js-websocket";
 
-import type { Light, LightingSnapshot, RgbColor } from "../../shared/lighting";
-import type { HomeAssistantClient } from "../home-assistant-client";
+import type { HomeAssistantClient } from "#/server/home-assistant-client";
+import type { RegistryService } from "#/server/registry/registry-service";
+import type {
+	DomoLightBulb,
+	DomoLightGroup,
+	DomoLightingSnapshot,
+	RgbColor,
+} from "#/shared/lighting-types";
+
 import {
 	isHomeAssistantLight,
 	isHomeAssistantLightGroup,
@@ -9,7 +16,7 @@ import {
 	mapHomeAssistantLightGroup,
 } from "./lighting-mapper";
 
-export type LightingListener = (snapshot: LightingSnapshot) => void;
+export type LightingListener = (snapshot: DomoLightingSnapshot) => void;
 
 export interface TurnOnLightOptions {
 	brightness?: number;
@@ -18,7 +25,7 @@ export interface TurnOnLightOptions {
 }
 
 export class LightingService {
-	private snapshot: LightingSnapshot = {
+	private snapshot: DomoLightingSnapshot = {
 		lights: {},
 		lightGroups: {},
 		revision: 0,
@@ -26,17 +33,20 @@ export class LightingService {
 
 	private readonly listeners = new Set<LightingListener>();
 
-	public constructor(private readonly homeAssistant: HomeAssistantClient) {}
+	public constructor(
+		private readonly homeAssistant: HomeAssistantClient,
+		private readonly registry: RegistryService,
+	) {}
 
-	public getSnapshot(): LightingSnapshot {
+	public getSnapshot(): DomoLightingSnapshot {
 		return this.snapshot;
 	}
 
-	public getAll(): readonly Light[] {
+	public getAll(): readonly DomoLightBulb[] {
 		return Object.values(this.snapshot.lights);
 	}
 
-	public get(id: string): Light | null {
+	public get(id: string): DomoLightBulb | null {
 		return this.snapshot.lights[id] ?? null;
 	}
 
@@ -55,24 +65,29 @@ export class LightingService {
 	 * donc on reconstruit ici le snapshot Lighting.
 	 */
 	public synchronize(entities: HassEntities): void {
-		const lights = Object.fromEntries(
-			Object.values(entities)
-				.filter((e) => isHomeAssistantLight(e))
-				.map((entity) => {
-					const light = mapHomeAssistantLight(entity);
+		const lights: Record<string, DomoLightBulb> = {};
+		const lightGroups: Record<string, DomoLightGroup> = {};
 
-					return [light.id, light];
-				}),
-		);
-		const lightGroups = Object.fromEntries(
-			Object.values(entities)
-				.filter((e) => isHomeAssistantLightGroup(e))
-				.map((entity) => {
-					const group = mapHomeAssistantLightGroup(entity);
+		for (const entity of Object.values(entities)) {
+			if (!entity.entity_id.startsWith("light.")) {
+				continue;
+			}
 
-					return [group.id, group];
-				}),
-		);
+			const registryEntity = this.registry.resolveEntity(entity.entity_id);
+
+			if (isHomeAssistantLightGroup(entity)) {
+				const group = mapHomeAssistantLightGroup(entity, registryEntity);
+
+				lightGroups[group.id] = group;
+				continue;
+			}
+
+			if (isHomeAssistantLight(entity)) {
+				const light = mapHomeAssistantLight(entity, registryEntity);
+
+				lights[light.id] = light;
+			}
+		}
 
 		const lightsAreEqual = this.areEntitiesEqual(this.snapshot.lights, lights);
 
@@ -167,7 +182,10 @@ export class LightingService {
 
 	private areEntitiesEqual<
 		T extends {
-			lastUpdated: string;
+			lastUpdated: string | null;
+			name: string;
+			area_id: string | null;
+			device_id: string | null;
 		},
 	>(
 		previous: Readonly<Record<string, T>>,
@@ -186,7 +204,10 @@ export class LightingService {
 
 			return (
 				previousEntity !== undefined &&
-				previousEntity.lastUpdated === nextEntity.lastUpdated
+				previousEntity.lastUpdated === nextEntity.lastUpdated &&
+				previousEntity.name === nextEntity.name &&
+				previousEntity.area_id === nextEntity.area_id &&
+				previousEntity.device_id === nextEntity.device_id
 			);
 		});
 	}

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import type { LightingSnapshot } from "#/shared/lighting";
+import type { DomoLightingSnapshot } from "#/shared/lighting-types";
 import { useLightingStore } from "@/features/lighting/lighting.store";
 
 export function useDomoSync() {
@@ -14,7 +14,7 @@ export function useDomoSync() {
 		};
 
 		eventSource.onmessage = (event) => {
-			const snapshot = JSON.parse(event.data) as LightingSnapshot;
+			const snapshot = JSON.parse(event.data) as DomoLightingSnapshot;
 
 			useLightingStore.getState().setSnapshot(snapshot);
 		};

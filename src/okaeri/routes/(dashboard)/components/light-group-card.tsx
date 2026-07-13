@@ -3,9 +3,9 @@ import { faLightbulb } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "motion/react";
 
-import type { LightGroup } from "#/shared/lighting";
+import type { DomoLightGroup } from "#/shared/lighting-types";
 
-function LightGroupCard({ group }: { group: LightGroup }) {
+function LightGroupCard({ group }: { group: DomoLightGroup }) {
 	const handleClick = () => {
 		// toggleLight({ entityId: group.id });
 		alert(`toggle: ${group.id}`);
