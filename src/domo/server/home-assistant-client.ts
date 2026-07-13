@@ -1,6 +1,7 @@
 import {
 	type Connection,
 	type HassEntities,
+	type MessageBase,
 	callService,
 	createConnection,
 	createLongLivedTokenAuth,
@@ -73,6 +74,20 @@ export class HomeAssistantClient {
 		const connection = this.requireConnection();
 
 		await callService(connection, domain, service, serviceData, target);
+	}
+
+	public async sendCommand<TResult>(message: MessageBase): Promise<TResult> {
+		const connection = this.getConnection();
+
+		return connection.sendMessagePromise<TResult>(message);
+	}
+
+	private getConnection(): Connection {
+		if (!this.connection) {
+			throw new Error("Home Assistant connection is not available.");
+		}
+
+		return this.connection;
 	}
 
 	private async waitForInitialEntities(connection: Connection): Promise<void> {

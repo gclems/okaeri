@@ -1,4 +1,4 @@
-import type { Room } from "#/domo/shared/architect/architect-schemas";
+import type { Room } from "#/shared/architect/architect-schemas";
 
 import {
 	findAllRooms,

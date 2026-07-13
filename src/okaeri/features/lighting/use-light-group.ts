@@ -2,8 +2,8 @@ import { useShallow } from "zustand/react/shallow";
 
 import { useLightingStore } from "@/features/lighting/lighting.store";
 
-export function useLightBulbs() {
+export function useLightGroup(id: string) {
 	return useLightingStore(
-		useShallow((state) => Object.values(state.snapshot?.lights ?? {})),
+		useShallow((state) => state.snapshot?.lightGroups?.[id]),
 	);
 }

@@ -3,9 +3,9 @@ import { faLightbulb } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "motion/react";
 
-import type { LightGroup } from "#/domo/shared/lighting";
+import type { LightGroup } from "#/shared/lighting";
 
-function DashboardLightGroupCard({ group }: { group: LightGroup }) {
+function LightGroupCard({ group }: { group: LightGroup }) {
 	const handleClick = () => {
 		// toggleLight({ entityId: group.id });
 		alert(`toggle: ${group.id}`);
@@ -60,4 +60,4 @@ function DashboardLightGroupCard({ group }: { group: LightGroup }) {
 	);
 }
 
-export { DashboardLightGroupCard };
+export { LightGroupCard };

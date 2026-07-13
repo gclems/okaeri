@@ -1,7 +1,7 @@
 import { inArray } from "drizzle-orm";
 
-import { roomRowToRoom } from "#/domo/shared/architect/architect-room-mapper";
-import type { Room } from "#/domo/shared/architect/architect-schemas";
+import { roomRowToRoom } from "#/shared/architect/architect-room-mapper";
+import type { Room } from "#/shared/architect/architect-schemas";
 
 import { db } from "../db/client";
 import { roomTable } from "../db/schema";
@@ -57,7 +57,7 @@ export async function replaceAllRooms(rooms: Room[]): Promise<void> {
 				rooms.map((room) => ({
 					id: room.id,
 					name: room.name,
-					haAreaId: room.haAreaId,
+					haRoomId: room.haRoomId,
 					color: room.color,
 					x: room.layout.x,
 					y: room.layout.y,

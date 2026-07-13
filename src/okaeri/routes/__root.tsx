@@ -7,10 +7,10 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
-import { AppLayout } from "#/okaeri/app/app-layout";
-import { AppSplashscreen } from "#/okaeri/app/app-splashscreen";
+import { AppLayout } from "@/routes/components/app-layout";
+import { AppSplashscreen } from "@/routes/components/app-splashscreen";
 
-import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
+import TanStackQueryDevtools from "../../integrations/tanstack-query/devtools";
 import appCss from "../styles.css?url";
 
 import "@fontsource-variable/inter";

@@ -33,7 +33,22 @@ const hslaToHsl = (hsla: string) => {
 };
 
 function RoomProperties() {
-	const { selectedRoom, updateRoom, deleteRoom } = useHomeArchitect();
+	const { selectedRoom, haAreas, updateRoom, deleteRoom } = useHomeArchitect();
+
+	const areasOptions = [
+		{
+			value: null,
+			label: "Aucune",
+		},
+		...haAreas.map((area) => ({
+			value: area.id,
+			label: area.name,
+		})),
+	];
+
+	const selectedAreaOption = selectedRoom?.haRoomId
+		? areasOptions.find((option) => option.value === selectedRoom.haRoomId)
+		: null;
 
 	return (
 		<Card className="w-60">
@@ -55,7 +70,15 @@ function RoomProperties() {
 						</Field>
 
 						<Field label="Zone Home Assistant">
-							<Select name="ha-area" id="ha-area" value={null} items={[]} />
+							<Select
+								name="ha-area"
+								id="ha-area"
+								value={selectedAreaOption}
+								items={areasOptions}
+								onValueChange={(value) =>
+									updateRoom(selectedRoom.id, { haRoomId: value })
+								}
+							/>
 						</Field>
 
 						<Field label="Couleur">

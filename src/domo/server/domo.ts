@@ -1,4 +1,8 @@
-import type { HassEntities, HassEntity } from "home-assistant-js-websocket";
+import type {
+	HassEntities,
+	HassEntity,
+	MessageBase,
+} from "home-assistant-js-websocket";
 
 import type { DomoEntityState, DomoSnapshot } from "../shared/home-assistant";
 import {
@@ -6,11 +10,13 @@ import {
 	type HomeAssistantClientOptions,
 } from "./home-assistant-client";
 import { LightingService } from "./lighting/lighting-service";
+import { RegistryService } from "./registry/registry-service";
 
 export type DomoListener = (snapshot: DomoSnapshot) => void;
 
 export class Domo {
 	public readonly lighting: LightingService;
+	public readonly registry: RegistryService;
 
 	private snapshot: DomoSnapshot = {
 		connectionState: "idle",
@@ -54,6 +60,7 @@ export class Domo {
 		});
 
 		this.lighting = new LightingService(this.homeAssistant);
+		this.registry = new RegistryService(this.homeAssistant);
 	}
 
 	public start(): Promise<void> {
@@ -91,6 +98,12 @@ export class Domo {
 		return () => {
 			this.listeners.delete(listener);
 		};
+	}
+
+	public async sendHomeAssistantCommand<TResult>(
+		message: MessageBase,
+	): Promise<TResult> {
+		return this.homeAssistant.sendCommand<TResult>(message);
 	}
 
 	private handleHomeAssistantEntities(entities: HassEntities): void {

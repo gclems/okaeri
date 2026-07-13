@@ -1,4 +1,4 @@
-import type { DomoLightBulb, DomoLightGroup } from "#/domo/_old_/lighting";
+import type { DomoLightBulb, DomoLightGroup } from "#/_old_/lighting";
 
 export type DomoLightBulbUpdatedEvent = {
 	type: "light.bulb.updated";

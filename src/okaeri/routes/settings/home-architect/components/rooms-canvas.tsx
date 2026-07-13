@@ -2,7 +2,7 @@ import { PlusIcon } from "lucide-react";
 import { Rnd } from "react-rnd";
 import { Button, cn } from "shanty-ui";
 
-import type { Room } from "#/domo/shared/architect/architect-types";
+import type { Room } from "#/shared/architect/architect-types";
 
 import { useHomeArchitect } from "./use-home-architect";
 
@@ -52,7 +52,7 @@ function RoomsCanvas() {
 					addRoom({
 						id,
 						name: `Pièce ${Object.keys(rooms).length + 1}`,
-						haAreaId: null,
+						haRoomId: null,
 						color: "rgba(137, 197, 215, 0.2)",
 						layout: {
 							x: 0,
@@ -153,7 +153,7 @@ function RoomDrawing({ room }: { room: Room }) {
 			>
 				<span className="font-medium">{room.name}</span>
 
-				{room.haAreaId ? (
+				{room.haRoomId ? (
 					<span className="mt-1 text-xs text-muted-foreground text-metric">HA</span>
 				) : (
 					<span className="mt-1 text-xs text-warning text-metric">Non HA</span>

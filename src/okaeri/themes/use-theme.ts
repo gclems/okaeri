@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
-// import type { DomoSunPhase } from "#/domo/_old_/sun";
-// import type { DomoSunPhase } from "#/domo/_old_/sun/sun.types";
-import { useSunStore } from "#/okaeri/features/sun/sun.store";
+// import type { DomoSunPhase } from "#/_old_/sun";
+// import type { DomoSunPhase } from "#/_old_/sun/sun.types";
+import { useSunStore } from "@/features/sun/sun.store";
 
 import { type OkaeriTheme, applyTheme } from "./theme";
 

@@ -1,11 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import { useShallow } from "zustand/react/shallow";
 
-import { getLightGroups } from "#/server/functions/lighting.functions";
+import { useLightingStore } from "@/features/lighting/lighting.store";
 
 export function useLightGroups() {
-	return useQuery({
-		queryKey: ["light-groups"],
-		queryFn: () => getLightGroups(),
-		refetchInterval: 10_000,
-	});
+	return useLightingStore(
+		useShallow((state) => Object.values(state.snapshot?.lightGroups ?? {})),
+	);
 }

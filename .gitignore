@@ -18,3 +18,5 @@ todos.json
 **/*.sqlite
 **/*.sqlite-shm
 **/*.sqlite-wal
+
+/.pnpm-store/

@@ -3,7 +3,7 @@
 	"private": true,
 	"type": "module",
 	"imports": {
-		"#/*": "./src/*"
+		"#/*": "./src/domo/*"
 	},
 	"scripts": {
 		"start": "node scripts/migrate.mjs && node .output/server/index.mjs",

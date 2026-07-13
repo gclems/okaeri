@@ -1,7 +1,7 @@
 export interface Room {
 	id: string;
 	name: string;
-	haAreaId: string | null;
+	haRoomId: string | null;
 	color: string;
 	layout: {
 		x: number;

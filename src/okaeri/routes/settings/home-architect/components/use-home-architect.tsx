@@ -6,13 +6,18 @@ import {
 	useState,
 } from "react";
 
-import { persistRooms } from "#/domo/server/architect/room-functions";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { Room } from "../../../domo/shared/architect/architect-types";
+import { persistRooms } from "#/server/architect/room-functions";
+import type { Room } from "#/shared/architect/architect-types";
+import type { HomeAssistantArea } from "#/shared/registry";
+import { roomsQueryOptions } from "@/features/architect/use-rooms";
 
 interface HomeArchitectContext {
 	selectedRoom: Room | null;
 	rooms: Record<string, Room>;
+
+	haAreas: HomeAssistantArea[];
 
 	changed: boolean;
 
@@ -30,9 +35,11 @@ const ArchitectContext = createContext<HomeArchitectContext | null>(null);
 
 export function HomeArchitectProvider({
 	defaultRooms = [],
+	haAreas = [],
 	children,
 }: {
 	defaultRooms: Room[];
+	haAreas: HomeAssistantArea[];
 	children: React.ReactNode;
 }) {
 	const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
@@ -107,19 +114,29 @@ export function HomeArchitectProvider({
 		setChanged(false);
 	}, [defaultRooms]);
 
-	const save = useCallback(async () => {
-		await persistRooms({
-			data: Object.values(rooms),
-		});
+	const queryClient = useQueryClient();
+	const saveMutation = useMutation({
+		mutationFn: (rooms: Room[]) =>
+			persistRooms({
+				data: rooms,
+			}),
 
+		onSuccess: () => {
+			queryClient.setQueryData(roomsQueryOptions.queryKey, Object.values(rooms));
+		},
+	});
+
+	const save = useCallback(async () => {
+		await saveMutation.mutateAsync(Object.values(rooms));
 		setChanged(false);
-	}, [rooms]);
+	}, [rooms, saveMutation]);
 
 	return (
 		<ArchitectContext
 			value={{
 				selectedRoom,
 				rooms,
+				haAreas,
 				changed,
 				addRoom,
 				updateRoom,

@@ -2,13 +2,13 @@
 
 @import "shanty-ui/css/shanty-ui.css";
 
-@import "okaeri/app/themes/morning.css";
-@import "okaeri/app/themes/day.css";
-@import "okaeri/app/themes/evening.css";
-@import "okaeri/app/themes/night.css";
+@import "themes/morning.css";
+@import "themes/day.css";
+@import "themes/evening.css";
+@import "themes/night.css";
 
 @source "./routes/";
-@source "./okaeri/";
+@source "./";
 
 @custom-variant dark (&:is(.dark *));
 

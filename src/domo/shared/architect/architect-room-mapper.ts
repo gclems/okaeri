@@ -1,4 +1,4 @@
-import type { NewRoomRow, RoomRow } from "#/domo/server/db/schema";
+import type { NewRoomRow, RoomRow } from "#/server/db/schema";
 
 import type { Room } from "./architect-types";
 
@@ -6,7 +6,7 @@ export function roomRowToRoom(row: RoomRow): Room {
 	return {
 		id: row.id as string,
 		name: row.name as string,
-		haAreaId: row.haAreaId as string | null,
+		haRoomId: row.haRoomId as string | null,
 		color: row.color as string,
 		layout: {
 			x: row.x as number,
@@ -27,7 +27,7 @@ export function roomToNewRoomRow(room: Room, now = new Date()): NewRoomRow {
 	return {
 		id: room.id,
 		name: room.name,
-		haAreaId: room.haAreaId,
+		haRoomId: room.haRoomId,
 		color: room.color,
 		x: room.layout.x,
 		y: room.layout.y,

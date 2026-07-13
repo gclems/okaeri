@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 
-import type { DomoSun } from "#/domo";
+import type { DomoSun } from "#/_old_/sun";
 
 export const useSunStore = create<DomoSun | null>(() => ({
 	date: new Date().toISOString(),

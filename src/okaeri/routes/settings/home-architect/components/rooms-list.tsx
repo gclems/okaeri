@@ -41,7 +41,7 @@ function RoomsList() {
 						addRoom({
 							id,
 							name: `Pièce ${Object.keys(rooms).length + 1}`,
-							haAreaId: null,
+							haRoomId: null,
 							color: "rgba(137, 197, 215, 0.2)",
 							layout: {
 								x: 0,

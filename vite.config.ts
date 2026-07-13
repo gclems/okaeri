@@ -14,6 +14,11 @@ const config = defineConfig(({ command }) => ({
 		devtools(),
 		tailwindcss(),
 		tanstackStart({
+			router: {
+				entry: "okaeri/router.tsx",
+				routesDirectory: "okaeri/routes",
+				generatedRouteTree: "okaeri/routeTree.gen.ts",
+			},
 			spa: {
 				enabled: true,
 			},

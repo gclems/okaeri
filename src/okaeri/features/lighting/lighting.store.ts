@@ -1,34 +1,26 @@
-// app/okaeri/features/lighting/stores/lighting.store.ts
-
 import { create } from "zustand";
 
-import type { DomoLightBulb, DomoLightGroup } from "#/domo";
+import type { LightingSnapshot } from "#/shared/lighting";
 
-type LightingState = {
-	bulbs: Record<string, DomoLightBulb>;
-	groups: Record<string, DomoLightGroup>;
-	upsertLightBulb: (bulb: DomoLightBulb) => void;
-	upsertLightGroup: (group: DomoLightGroup) => void;
-};
+type ConnectionState = "idle" | "connecting" | "connected" | "error";
+
+interface LightingState {
+	snapshot: LightingSnapshot | null;
+	connectionState: ConnectionState;
+
+	setSnapshot: (snapshot: LightingSnapshot) => void;
+	setConnectionState: (state: ConnectionState) => void;
+}
 
 export const useLightingStore = create<LightingState>((set) => ({
-	bulbs: {},
-	groups: {},
+	snapshot: null,
+	connectionState: "idle",
 
-	upsertLightBulb: (bulb) => {
-		set((state) => ({
-			bulbs: {
-				...state.bulbs,
-				[bulb.entityId]: bulb,
-			},
-		}));
+	setSnapshot: (snapshot) => {
+		set({ snapshot });
 	},
-	upsertLightGroup: (group) => {
-		set((state) => ({
-			groups: {
-				...state.groups,
-				[group.entityId]: group,
-			},
-		}));
+
+	setConnectionState: (connectionState) => {
+		set({ connectionState });
 	},
 }));
