@@ -1,8 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Alert } from "shanty-ui";
 
-import type { Room } from "#/shared/architect/architect-types";
-import type { HomeAssistantArea } from "#/shared/registry";
 import { QueryLoader } from "@/components/query-loader";
 import { roomsQueryOptions, useRooms } from "@/features/architect/use-rooms";
 import {
@@ -31,10 +29,7 @@ function RouteComponent() {
 	return (
 		<QueryLoader queries={[haAreasQuery, roomsQuery]}>
 			{([areas, rooms]) => (
-				<HomeArchitectProvider
-					defaultRooms={(rooms ?? []) as Room[]}
-					haAreas={(areas ?? []) as HomeAssistantArea[]}
-				>
+				<HomeArchitectProvider defaultRooms={rooms} haAreas={areas}>
 					<div className="space-y-6 @container">
 						<Alert className="@5xl:hidden" color="warning-discrete">
 							Cette page n'est pas responsive
