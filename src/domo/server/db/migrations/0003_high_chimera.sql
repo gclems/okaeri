@@ -1,0 +1,1 @@
+ALTER TABLE `room` ADD `ha_environment_sensor_device_id` text;

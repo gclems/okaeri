@@ -7,6 +7,7 @@ import {
 	homeAssistantAreasQueryOptions,
 	useHomeAssistantAreas,
 } from "@/features/registry/use-home-assistant-areas";
+import { useHomeAssistantDevices } from "@/features/registry/use-home-assistant-devices";
 import { ResetButton } from "@/routes/settings/home-architect/components/reset-button";
 import { RoomProperties } from "@/routes/settings/home-architect/components/room-properties";
 import { RoomsCanvas } from "@/routes/settings/home-architect/components/rooms-canvas";
@@ -25,11 +26,16 @@ export const Route = createFileRoute("/settings/home-architect/")({
 function RouteComponent() {
 	const roomsQuery = useRooms();
 	const haAreasQuery = useHomeAssistantAreas();
+	const haDevicesQuery = useHomeAssistantDevices();
 
 	return (
-		<QueryLoader queries={[haAreasQuery, roomsQuery]}>
-			{([areas, rooms]) => (
-				<HomeArchitectProvider defaultRooms={rooms} haAreas={areas}>
+		<QueryLoader queries={[haAreasQuery, haDevicesQuery, roomsQuery]}>
+			{([areas, devices, rooms]) => (
+				<HomeArchitectProvider
+					defaultRooms={rooms}
+					haAreas={areas}
+					haDevices={devices}
+				>
 					<div className="space-y-6 @container">
 						<Alert className="@5xl:hidden" color="warning-discrete">
 							Cette page n'est pas responsive

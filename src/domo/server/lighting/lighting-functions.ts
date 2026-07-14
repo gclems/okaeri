@@ -25,7 +25,7 @@ const setColorSchema = z.object({
 });
 
 export const getLightingSnapshot = createServerFn({
-	method: "POST",
+	method: "GET",
 }).handler(async () => {
 	const domo = getDomo();
 

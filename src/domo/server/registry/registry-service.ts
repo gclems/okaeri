@@ -39,10 +39,6 @@ export class RegistryService {
 		this.devices = new Map(devices.map((device) => [device.id, device]));
 
 		this.areas = new Map(areas.map((area) => [area.area_id, area]));
-
-		// console.log({ entities: this.entities });
-		// console.log({ devices: this.devices });
-		// console.log({ areas: this.areas });
 	}
 
 	public getEntities(): Map<string, HassEntityRegistryEntry> {

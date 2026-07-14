@@ -6,7 +6,8 @@ export function roomRowToRoom(row: RoomRow): Room {
 	return {
 		id: row.id as string,
 		name: row.name as string,
-		haRoomId: row.haRoomId as string | null,
+		haAreaId: row.haAreaId as string | null,
+		haEnvironmentSensorDeviceId: row.haEnvironmentSensorDeviceId as string | null,
 		color: row.color as string,
 		layout: {
 			x: row.x as number,
@@ -27,7 +28,8 @@ export function roomToNewRoomRow(room: Room, now = new Date()): NewRoomRow {
 	return {
 		id: room.id,
 		name: room.name,
-		haRoomId: room.haRoomId,
+		haAreaId: room.haAreaId,
+		haEnvironmentSensorDeviceId: room.haEnvironmentSensorDeviceId,
 		color: room.color,
 		x: room.layout.x,
 		y: room.layout.y,

@@ -8,7 +8,8 @@ export const roomTable = sqliteTable(
 
 		name: text("name").notNull(),
 
-		haRoomId: text("ha_area_id"),
+		haAreaId: text("ha_area_id"),
+		haEnvironmentSensorDeviceId: text("ha_environment_sensor_device_id"),
 
 		color: text("color").notNull(),
 

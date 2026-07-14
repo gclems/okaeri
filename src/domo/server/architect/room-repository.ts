@@ -57,7 +57,8 @@ export async function replaceAllRooms(rooms: Room[]): Promise<void> {
 				rooms.map((room) => ({
 					id: room.id,
 					name: room.name,
-					haRoomId: room.haRoomId,
+					haAreaId: room.haAreaId,
+					haEnvironmentSensorDeviceId: room.haEnvironmentSensorDeviceId,
 					color: room.color,
 					x: room.layout.x,
 					y: room.layout.y,

@@ -13,7 +13,8 @@ import {
 import { useHomeArchitect } from "./use-home-architect";
 
 function RoomProperties() {
-	const { selectedRoom, haAreas, updateRoom, deleteRoom } = useHomeArchitect();
+	const { selectedRoom, haAreas, haDevices, updateRoom, deleteRoom } =
+		useHomeArchitect();
 
 	const areasOptions = [
 		{
@@ -26,9 +27,33 @@ function RoomProperties() {
 		})),
 	];
 
-	const selectedAreaOption = selectedRoom?.haRoomId
-		? areasOptions.find((option) => option.value === selectedRoom.haRoomId)
+	const selectedAreaOption = selectedRoom?.haAreaId
+		? areasOptions.find((option) => option.value === selectedRoom.haAreaId)
 		: areasOptions[0];
+
+	const sensorsOptions = [
+		{
+			value: "",
+			label: "Aucun",
+		},
+		...haDevices
+			.map((device) => ({
+				value: device.id,
+				label:
+					device.name_by_user ||
+					device.name ||
+					device.model ||
+					device.manufacturer ||
+					device.id,
+			}))
+			.sort((a, b) => a.label.localeCompare(b.label)),
+	];
+
+	const selectedSensorOption = selectedRoom?.haEnvironmentSensorDeviceId
+		? sensorsOptions.find(
+				(option) => option.value === selectedRoom.haEnvironmentSensorDeviceId,
+			)
+		: sensorsOptions[0];
 
 	return (
 		<Card className="w-80">
@@ -56,7 +81,19 @@ function RoomProperties() {
 								value={selectedAreaOption}
 								items={areasOptions}
 								onValueChange={(value) =>
-									updateRoom(selectedRoom.id, { haRoomId: value })
+									updateRoom(selectedRoom.id, { haAreaId: value })
+								}
+							/>
+						</Field>
+
+						<Field label="Thermomètre">
+							<Select
+								name="ha-environment-sensor"
+								id="ha-environment-sensor"
+								value={selectedSensorOption}
+								items={sensorsOptions}
+								onValueChange={(value) =>
+									updateRoom(selectedRoom.id, { haEnvironmentSensorDeviceId: value })
 								}
 							/>
 						</Field>

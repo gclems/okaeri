@@ -4,6 +4,7 @@ import type {
 	MessageBase,
 } from "home-assistant-js-websocket";
 
+import { EnvironmentService } from "#/server/environment/environment-service";
 import {
 	HomeAssistantClient,
 	type HomeAssistantClientOptions,
@@ -18,8 +19,9 @@ import type {
 export type DomoListener = (snapshot: DomoSnapshot) => void;
 
 export class Domo {
-	public readonly lighting: LightingService;
 	public readonly registry: RegistryService;
+	public readonly lighting: LightingService;
+	public readonly environment: EnvironmentService;
 
 	private snapshot: DomoSnapshot = {
 		connectionState: "idle",
@@ -68,6 +70,7 @@ export class Domo {
 
 		this.registry = new RegistryService(this.homeAssistant);
 		this.lighting = new LightingService(this.homeAssistant, this.registry);
+		this.environment = new EnvironmentService(this.homeAssistant, this.registry);
 	}
 
 	public async start(): Promise<void> {
@@ -132,10 +135,8 @@ export class Domo {
 	}
 
 	private handleHomeAssistantEntities(entities: HassEntities): void {
-		/*
-		 * Nouveau silo métier.
-		 */
 		this.lighting.synchronize(entities);
+		this.environment.synchronize(entities);
 
 		/*
 		 * Snapshot brut temporairement conservé pour les domaines
@@ -176,24 +177,6 @@ export class Domo {
 			...changes,
 			revision: this.snapshot.revision + 1,
 		};
-
-		// const exceptDomains = [
-		// 	"button",
-		// 	"light",
-		// 	"scene",
-		// 	"update",
-		// 	"switch",
-		// 	"zone",
-		// ];
-		// const filteredEntities: Record<string, DomoEntityState> = Object.fromEntries(
-		// 	Object.values(this.snapshot.entities)
-		// 		.filter((entity) => {
-		// 			const domain = entity.entityId.split(".")[0];
-		// 			return !exceptDomains.includes(domain);
-		// 		})
-		// 		.map((entity) => [entity.entityId, entity]),
-		// );
-		// console.log({ snapshot: filteredEntities });
 
 		for (const listener of this.listeners) {
 			listener(this.snapshot);

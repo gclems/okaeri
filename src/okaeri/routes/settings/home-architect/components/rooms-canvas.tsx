@@ -52,7 +52,7 @@ function RoomsCanvas() {
 					addRoom({
 						id,
 						name: `Pièce ${Object.keys(rooms).length + 1}`,
-						haRoomId: null,
+						haAreaId: null,
 						color: "rgba(137, 197, 215, 0.2)",
 						layout: {
 							x: 0,
@@ -153,7 +153,7 @@ function RoomDrawing({ room }: { room: Room }) {
 			>
 				<span className="font-medium">{room.name}</span>
 
-				{room.haRoomId ? (
+				{room.haAreaId ? (
 					<span className="mt-1 text-xs text-muted-foreground text-metric">HA</span>
 				) : (
 					<span className="mt-1 text-xs text-warning text-metric">Non HA</span>
