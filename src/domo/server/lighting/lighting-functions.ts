@@ -29,7 +29,7 @@ export const getLightingSnapshot = createServerFn({
 }).handler(async () => {
 	const domo = getDomo();
 
-	await domo.start();
+	await domo.whenReady();
 
 	return domo.lighting.getSnapshot();
 });
@@ -41,7 +41,7 @@ export const turnOnLight = createServerFn({
 	.handler(async ({ data }) => {
 		const domo = getDomo();
 
-		await domo.start();
+		await domo.whenReady();
 		await domo.lighting.turnOn(data.entityId);
 
 		return {
@@ -56,7 +56,7 @@ export const turnOffLight = createServerFn({
 	.handler(async ({ data }) => {
 		const domo = getDomo();
 
-		await domo.start();
+		await domo.whenReady();
 		await domo.lighting.turnOff(data.entityId);
 
 		return {
@@ -71,7 +71,7 @@ export const toggleLight = createServerFn({
 	.handler(async ({ data }) => {
 		const domo = getDomo();
 
-		await domo.start();
+		await domo.whenReady();
 		await domo.lighting.toggle(data.entityId);
 
 		return {
@@ -86,7 +86,7 @@ export const setLightBrightness = createServerFn({
 	.handler(async ({ data }) => {
 		const domo = getDomo();
 
-		await domo.start();
+		await domo.whenReady();
 
 		await domo.lighting.setBrightness(data.entityId, data.brightness);
 
@@ -102,7 +102,7 @@ export const setLightColor = createServerFn({
 	.handler(async ({ data }) => {
 		const domo = getDomo();
 
-		await domo.start();
+		await domo.whenReady();
 
 		await domo.lighting.setColor(data.entityId, data.color);
 

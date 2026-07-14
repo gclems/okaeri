@@ -12,26 +12,6 @@ import {
 
 import { useHomeArchitect } from "./use-home-architect";
 
-const hslToHsla = (hsl: string) => {
-	const [h, s, l] = hsl
-		.replace("hsl(", "")
-		.replace(")", "")
-		.split(",")
-		.map((v) => parseFloat(v));
-
-	return `hsla(${h}, ${s}%, ${l}%, 0.2)`;
-};
-
-const hslaToHsl = (hsla: string) => {
-	const [h, s, l] = hsla
-		.replace("hsla(", "")
-		.replace(")", "")
-		.split(",")
-		.map((v) => parseFloat(v));
-
-	return `hsl(${h}, ${s}%, ${l}%)`;
-};
-
 function RoomProperties() {
 	const { selectedRoom, haAreas, updateRoom, deleteRoom } = useHomeArchitect();
 
@@ -51,7 +31,7 @@ function RoomProperties() {
 		: areasOptions[0];
 
 	return (
-		<Card className="w-60">
+		<Card className="w-80">
 			<Card.Header title="Propriétés" />
 			<Card.Body>
 				{selectedRoom && (
@@ -95,10 +75,8 @@ function RoomProperties() {
 								</Popover.Trigger>
 								<Popover.Popup>
 									<HslStringColorPicker
-										color={hslaToHsl(selectedRoom.color)}
-										onChange={(color) =>
-											updateRoom(selectedRoom.id, { color: hslToHsla(color) })
-										}
+										color={selectedRoom.color}
+										onChange={(color) => updateRoom(selectedRoom.id, { color })}
 									/>
 								</Popover.Popup>
 							</Popover>

@@ -7,7 +7,7 @@ export const getHomeAssistantAreas = createServerFn({
 }).handler(async () => {
 	const domo = getDomo();
 
-	await domo.start();
+	await domo.whenReady();
 
 	return Array.from(domo.registry.getAreas().values());
 });

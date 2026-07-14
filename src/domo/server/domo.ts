@@ -95,6 +95,20 @@ export class Domo {
 		return this.startPromise;
 	}
 
+	public async whenReady(): Promise<void> {
+		if (this.snapshot.connectionState === "connected") {
+			return;
+		}
+
+		if (this.startPromise) {
+			return this.startPromise;
+		}
+
+		throw new Error(
+			this.snapshot.error ?? "Domo is not connected to Home Assistant.",
+		);
+	}
+
 	public stop(): void {
 		this.homeAssistant.disconnect();
 	}
@@ -162,6 +176,24 @@ export class Domo {
 			...changes,
 			revision: this.snapshot.revision + 1,
 		};
+
+		// const exceptDomains = [
+		// 	"button",
+		// 	"light",
+		// 	"scene",
+		// 	"update",
+		// 	"switch",
+		// 	"zone",
+		// ];
+		// const filteredEntities: Record<string, DomoEntityState> = Object.fromEntries(
+		// 	Object.values(this.snapshot.entities)
+		// 		.filter((entity) => {
+		// 			const domain = entity.entityId.split(".")[0];
+		// 			return !exceptDomains.includes(domain);
+		// 		})
+		// 		.map((entity) => [entity.entityId, entity]),
+		// );
+		// console.log({ snapshot: filteredEntities });
 
 		for (const listener of this.listeners) {
 			listener(this.snapshot);

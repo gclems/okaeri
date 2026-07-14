@@ -36,7 +36,6 @@ function RouteComponent() {
 						</Alert>
 
 						<div className="flex items-stretch aspect-video gap-x-4">
-							{/* <RoomsList /> */}
 							<RoomsCanvas />
 							<RoomProperties />
 						</div>

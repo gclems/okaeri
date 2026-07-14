@@ -8,7 +8,7 @@ export const Route = createFileRoute("/api/lighting/events")({
 			GET: async ({ request }) => {
 				const domo = getDomo();
 
-				await domo.start();
+				await domo.whenReady();
 
 				const encoder = new TextEncoder();
 				let cleanup = () => {};

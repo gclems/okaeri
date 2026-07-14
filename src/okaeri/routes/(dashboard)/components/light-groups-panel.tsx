@@ -2,6 +2,7 @@ import { faLightbulb, faPowerOff } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Card } from "shanty-ui";
 
+import { turnOffLight } from "#/server/lighting/lighting-functions";
 import { useLightGroups } from "@/features/lighting/use-light-groups";
 
 import { LightGroupCard } from "./light-group-card";
@@ -9,7 +10,11 @@ import { LightGroupCard } from "./light-group-card";
 export function LightGroupsPanel() {
 	const lightGroups = useLightGroups();
 
-	async function turnOffAllLights() {}
+	const turnAllGroupsOff = () => {
+		lightGroups.forEach((g) => {
+			turnOffLight({ data: { entityId: g.id } });
+		});
+	};
 
 	return (
 		<Card>
@@ -24,18 +29,20 @@ export function LightGroupsPanel() {
 				}
 			/>
 			<Card.Body>
-				<div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+				<ul className="space-y-2">
 					{lightGroups.map((group) => (
-						<LightGroupCard key={group.id} group={group} />
+						<li key={group.id}>
+							<LightGroupCard group={group} />
+						</li>
 					))}
-				</div>
+				</ul>
 			</Card.Body>
 			<Card.Footer>
 				<Button
 					variant="light"
 					color="destructive"
 					className="w-full text-right"
-					onClick={turnOffAllLights}
+					onClick={turnAllGroupsOff}
 				>
 					Tout éteindre&nbsp;
 					<FontAwesomeIcon icon={faPowerOff} />

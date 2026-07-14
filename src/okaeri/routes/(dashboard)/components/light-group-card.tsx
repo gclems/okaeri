@@ -3,12 +3,12 @@ import { faLightbulb } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "motion/react";
 
+import { toggleLight } from "#/server/lighting/lighting-functions";
 import type { DomoLightGroup } from "#/shared/lighting-types";
 
 function LightGroupCard({ group }: { group: DomoLightGroup }) {
 	const handleClick = () => {
-		// toggleLight({ entityId: group.id });
-		alert(`toggle: ${group.id}`);
+		toggleLight({ data: { entityId: group.id } });
 	};
 
 	return (

@@ -23,7 +23,9 @@ const config = defineConfig(({ command }) => ({
 				enabled: true,
 			},
 		}),
-		nitro(),
+		nitro({
+			plugins: ["./src/domo/server/domo-plugin.ts"],
+		}),
 		viteReact(),
 	],
 	ssr: command === "serve" ? { noExternal: ["shanty-ui"] } : undefined,

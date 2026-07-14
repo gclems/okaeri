@@ -1,6 +1,10 @@
-import { cn } from "shanty-ui";
+import { faLightbulb as farLightbulb } from "@fortawesome/free-regular-svg-icons";
+import { faLightbulb } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Dialog, cn } from "shanty-ui";
 
 import type { Room } from "#/shared/architect/architect-types";
+import type { DomoLightBulb } from "#/shared/lighting-types";
 import { QueryLoader } from "@/components/query-loader";
 import { useRooms } from "@/features/architect/use-rooms";
 import { useLightBulbs } from "@/features/lighting/use-light-bulbs";
@@ -11,6 +15,7 @@ const GRID_ROWS = 32;
 
 function HomeBlueprints() {
 	const roomsQuery = useRooms();
+	const lightBulbs = useLightBulbs();
 
 	const width = GRID_COLUMNS * GRID_SIZE;
 	const height = GRID_ROWS * GRID_SIZE;
@@ -18,38 +23,54 @@ function HomeBlueprints() {
 	return (
 		<div className="relative h-full w-full overflow-hidden">
 			<QueryLoader queries={[roomsQuery]}>
-				{([rooms]) => (
-					<div className="h-full w-full overflow-auto flex-1 relative">
-						<div
-							className="relative mx-auto overflow-hidden rounded-md bg-background shadow-sm"
-							style={{
-								width,
-								height,
-							}}
-						>
-							{Object.values(rooms).map((room) => (
-								<RoomDrawing key={room.id} room={room} />
-							))}
+				{([rooms]) => {
+					const lightBulbsByRoom: Record<string, DomoLightBulb[]> = {};
+					rooms.forEach((room) => {
+						lightBulbsByRoom[room.id] = [];
+						if (room.haRoomId) {
+							lightBulbsByRoom[room.id] =
+								lightBulbs.filter((bulb) => bulb.area_id === room.haRoomId) ?? [];
+						}
+					});
+
+					return (
+						<div className="h-full w-full overflow-auto flex-1 relative">
+							<div
+								className="relative mx-auto overflow-hidden rounded-md bg-background shadow-sm"
+								style={{
+									width,
+									height,
+								}}
+							>
+								{Object.values(rooms).map((room) => (
+									<RoomDrawing
+										key={room.id}
+										room={room}
+										lightBulbs={lightBulbsByRoom[room.id]}
+									/>
+								))}
+							</div>
 						</div>
-					</div>
-				)}
+					);
+				}}
 			</QueryLoader>
 		</div>
 	);
 }
 
-function RoomDrawing({ room }: { room: Room }) {
-	const lightBulbs = useLightBulbs();
-
-	// const roomLightBulbs = Object.values(lightBulbs).filter(
-	// 	(lightBulb) => lightBulb.roomId === room.id,
-	// );
+function RoomDrawing({
+	room,
+	lightBulbs,
+}: {
+	room: Room;
+	lightBulbs: DomoLightBulb[];
+}) {
+	const lightsOnCount = lightBulbs.filter((bulb) => bulb.state === "on").length;
 
 	return (
-		<div>
-			<button
-				type="button"
-				onClick={() => alert("clicli")}
+		<Dialog>
+			<Dialog.Trigger
+				render={<button type="button" />}
 				className={cn(
 					"cursor-pointer",
 					"relative flex h-full w-full flex-col items-center justify-center",
@@ -73,9 +94,24 @@ function RoomDrawing({ room }: { room: Room }) {
 					height: room.layout.height * GRID_SIZE,
 				}}
 			>
-				<span className="font-medium">{room.name}</span>
-			</button>
-		</div>
+				<div className="font-medium">{room.name}</div>
+				{lightBulbs.length > 0 && (
+					<div className="flex items-center text-metric">
+						<span
+							className={cn({
+								"text-warning": lightsOnCount > 0,
+							})}
+						>
+							<FontAwesomeIcon
+								icon={lightsOnCount === 0 ? farLightbulb : faLightbulb}
+							/>
+						</span>{" "}
+						{lightsOnCount}/{lightBulbs.length}
+					</div>
+				)}
+			</Dialog.Trigger>
+			<Dialog.Popup size="lg">{room.name}</Dialog.Popup>
+		</Dialog>
 	);
 }
 

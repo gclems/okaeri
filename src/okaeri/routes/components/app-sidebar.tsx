@@ -51,16 +51,16 @@ function AppSidebar() {
 							<SunSnowIcon /> Conditions météo
 						</Sidebar.Item>
 					</Tooltip>
-
-					<Separator className="bg-border my-4" />
-
-					<Tooltip content="Architecte">
-						<Sidebar.Item render={<Link to="/settings/home-architect" />}>
-							<LandmarkIcon />
-							Architecte
-						</Sidebar.Item>
-					</Tooltip>
 				</div>
+
+				<Separator className="bg-border my-4" />
+
+				<Tooltip content="Architecte">
+					<Sidebar.Item render={<Link to="/settings/home-architect" />}>
+						<LandmarkIcon />
+						Architecte
+					</Sidebar.Item>
+				</Tooltip>
 			</Sidebar.Content>
 		</Sidebar>
 	);
