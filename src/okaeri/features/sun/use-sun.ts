@@ -1,5 +1,3 @@
-// features/architect/use-rooms.ts
-
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
 import { loadSun } from "#/server/sun/sun-functions";
