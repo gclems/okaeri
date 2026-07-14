@@ -85,6 +85,7 @@ function RoomDrawing({
 			<Dialog.Trigger
 				render={<button type="button" />}
 				className={cn(
+					"@container",
 					"cursor-pointer",
 					"relative flex h-full w-full flex-col items-center justify-center",
 					"overflow-hidden border px-2",
@@ -108,57 +109,59 @@ function RoomDrawing({
 				}}
 			>
 				<div className="font-medium">{room.name}</div>
-				{lightBulbs.length > 0 && (
-					<div className="flex items-center text-metric">
-						<span
-							className={cn({
-								"text-warning": lightsOnCount > 0,
-							})}
-						>
-							<FontAwesomeIcon
-								icon={lightsOnCount === 0 ? farLightbulb : faLightbulb}
-							/>
-						</span>{" "}
-						{lightsOnCount}/{lightBulbs.length}
-					</div>
-				)}
-				{environmentSensor && (
-					<div>
-						{environmentSensor.thermometer && (
-							<div className=" flex gap-1 items-center">
-								<FontAwesomeIcon icon={faThermometerHalf} />
-								<span className="text-metric text-xs">
-									{environmentSensor.thermometer.value}
-								</span>
-								<span className="text-xs text-muted">
-									{environmentSensor.thermometer.unitOfMeasurement}
-								</span>
-							</div>
-						)}
-						{environmentSensor.hygrometer && (
-							<div className="text-metric text-xs flex gap-1 items-center">
-								<FontAwesomeIcon icon={faTint} />
-								<span className="text-metric text-xs">
-									{environmentSensor.hygrometer.value}
-								</span>
-								<span className="text-xs text-muted">
-									{environmentSensor.hygrometer.unitOfMeasurement}
-								</span>
-							</div>
-						)}
-						{environmentSensor.barometer && (
-							<div className="text-metric text-xs flex gap-1 items-center">
-								<FontAwesomeIcon icon={faTachometerAlt} />
-								<span className="text-metric text-xs">
-									{environmentSensor.barometer.value}
-								</span>
-								<span className="text-xs text-muted">
-									{environmentSensor.barometer.unitOfMeasurement}
-								</span>
-							</div>
-						)}
-					</div>
-				)}
+				<div className="grid @min-[12rem]:grid-cols-2">
+					{lightBulbs.length > 0 && (
+						<div className="flex items-center text-metric">
+							<span
+								className={cn({
+									"text-warning": lightsOnCount > 0,
+								})}
+							>
+								<FontAwesomeIcon
+									icon={lightsOnCount === 0 ? farLightbulb : faLightbulb}
+								/>
+							</span>{" "}
+							{lightsOnCount}/{lightBulbs.length}
+						</div>
+					)}
+					{environmentSensor && (
+						<>
+							{environmentSensor.thermometer && (
+								<div className=" flex gap-1 items-center">
+									<FontAwesomeIcon icon={faThermometerHalf} />
+									<span className="text-metric text-xs">
+										{environmentSensor.thermometer.value}
+									</span>
+									<span className="text-xs text-muted">
+										{environmentSensor.thermometer.unitOfMeasurement}
+									</span>
+								</div>
+							)}
+							{environmentSensor.hygrometer && (
+								<div className="text-metric text-xs flex gap-1 items-center">
+									<FontAwesomeIcon icon={faTint} />
+									<span className="text-metric text-xs">
+										{environmentSensor.hygrometer.value}
+									</span>
+									<span className="text-xs text-muted">
+										{environmentSensor.hygrometer.unitOfMeasurement}
+									</span>
+								</div>
+							)}
+							{environmentSensor.barometer && (
+								<div className="text-metric text-xs flex gap-1 items-center">
+									<FontAwesomeIcon icon={faTachometerAlt} />
+									<span className="text-metric text-xs">
+										{environmentSensor.barometer.value}
+									</span>
+									<span className="text-xs text-muted">
+										{environmentSensor.barometer.unitOfMeasurement}
+									</span>
+								</div>
+							)}
+						</>
+					)}
+				</div>
 			</Dialog.Trigger>
 			<Dialog.Popup size="lg">
 				<Fieldset legend="Éclairage"></Fieldset>
