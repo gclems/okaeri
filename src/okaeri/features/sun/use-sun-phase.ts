@@ -4,7 +4,9 @@ import type { DaylySun } from "#/shared/sun-types";
 
 import { type SunPhase, getSunPhase } from "./sun-functions";
 
-export function useSunPhase(sun: DaylySun | undefined): SunPhase | undefined {
+export function useSunPhase(
+	sun: DaylySun | undefined | null,
+): SunPhase | undefined {
 	const [phase, setPhase] = useState<SunPhase | undefined>(() =>
 		sun ? getSunPhase(sun) : undefined,
 	);

@@ -21,7 +21,7 @@ export function getSunPhase(sun: DaylySun): SunPhase {
 
 	const minutesAfterSunset =
 		(now.getTime() - sun.sunset_at.getTime()) / (1000 * 60);
-	if (minutesAfterSunset < 120) {
+	if (minutesAfterSunset < 45) {
 		return "sunset";
 	}
 

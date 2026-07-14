@@ -1,38 +1,32 @@
-import { useEffect, useMemo, useState } from "react";
-
-import type { DomoSunPhase } from "#/_old_/sun";
+import { useEffect, useState } from "react";
 
 // import type { DomoSunPhase } from "#/_old_/sun";
 // import type { DomoSunPhase } from "#/_old_/sun/sun.types";
 
+import type { SunPhase } from "@/features/sun/sun-functions";
+import { useSun } from "@/features/sun/use-sun";
+import { useSunPhase } from "@/features/sun/use-sun-phase";
+
 import { type OkaeriTheme, applyTheme } from "./theme";
 
 const themeFromSunPhase = {
-	morning: "morning",
+	sunrise: "morning",
 	day: "day",
-	evening: "evening",
+	sunset: "evening",
 	night: "night",
-} satisfies Record<DomoSunPhase, OkaeriTheme>;
+} satisfies Record<SunPhase, OkaeriTheme>;
 
 export function useTheme() {
-	//  const sun = useSunStore();
-	const sun = useMemo(
-		() => ({
-			sunrise: new Date("2024-06-21T05:30:00"),
-			noon: new Date("2024-06-21T12:00:00"),
-			sunset: new Date("2024-06-21T20:30:00"),
-			phase: "morning",
-		}),
-		[],
-	);
+	const sunQuery = useSun();
+	const sunPhase = useSunPhase(sunQuery.data);
 
 	const [theme, setTheme] = useState<OkaeriTheme>("morning");
 
 	useEffect(() => {
-		const nextTheme = themeFromSunPhase[sun?.phase as DomoSunPhase] ?? "day";
+		const nextTheme = themeFromSunPhase[sunPhase as SunPhase] ?? "day";
 		setTheme(nextTheme);
 		applyTheme(nextTheme);
-	}, [sun]);
+	}, [sunPhase]);
 
 	return {
 		theme,

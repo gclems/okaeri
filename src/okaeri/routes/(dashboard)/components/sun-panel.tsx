@@ -111,16 +111,16 @@ function SunPanelContent({ sun }: { sun: Sun }) {
 function SunPhaseIcon({ phase }: { phase: SunPhase }) {
 	switch (phase) {
 		case "day": {
-			return <SunIcon size="1.875rem" />;
+			return <SunIcon size="3rem" />;
 		}
 		case "night": {
-			return <MoonIcon size="1.875rem" />;
+			return <MoonIcon size="3rem" />;
 		}
 		case "sunrise": {
-			return <SunriseIcon size="1.875rem" />;
+			return <SunriseIcon size="3rem" />;
 		}
 		case "sunset": {
-			return <SunsetIcon size="1.875rem" />;
+			return <SunsetIcon size="3rem" />;
 		}
 	}
 }
