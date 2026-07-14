@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 
-import { saveRoomsInputSchema } from "#/shared/architect/architect-schemas";
+import { saveRoomsInputSchema } from "#/server/architect/architect-schemas";
 
 import {
 	RoomValidationError,

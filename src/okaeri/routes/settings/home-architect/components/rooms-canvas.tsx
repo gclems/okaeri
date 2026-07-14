@@ -2,7 +2,7 @@ import { PlusIcon } from "lucide-react";
 import { Rnd } from "react-rnd";
 import { Button, cn } from "shanty-ui";
 
-import type { Room } from "#/shared/architect/architect-types";
+import type { Room } from "#/shared/architect-types";
 
 import { useHomeArchitect } from "./use-home-architect";
 

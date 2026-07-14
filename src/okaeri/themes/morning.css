@@ -52,8 +52,14 @@
 
 	--energy: oklch(77% 0.17 85);
 	--temperature: oklch(70% 0.15 35);
+	--temperature-excessive: oklch(59.029% 0.23425 29.159);
+	--temperature-low: oklch(77.127% 0.12352 236.719);
 	--humidity: oklch(68% 0.14 240);
 	--network: oklch(72% 0.12 170);
 	--security: oklch(60% 0.22 28);
 	--automation: oklch(66% 0.18 290);
+}
+
+[data-slot="card"] {
+	@apply shadow-sm;
 }

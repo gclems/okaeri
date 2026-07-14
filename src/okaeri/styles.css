@@ -20,6 +20,8 @@
 
 	--color-energy: var(--energy);
 	--color-temperature: var(--temperature);
+	--color-temperature-excessive: var(--temperature-excessive);
+	--color-temperature-low: var(--temperature-low);
 	--color-humidity: var(--humidity);
 	--color-network: var(--network);
 	--color-security: var(--security);

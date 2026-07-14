@@ -8,9 +8,10 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Dialog, Fieldset, Separator, cn } from "shanty-ui";
 
-import type { Room } from "#/shared/architect/architect-types";
+import type { Room } from "#/shared/architect-types";
 import type { DomoEnvironmentSensor } from "#/shared/environment-types";
 import type { DomoLightBulb } from "#/shared/lighting-types";
+import { LastUpdatedDescription } from "@/components/last-updated-description";
 import { QueryLoader } from "@/components/query-loader";
 import { useRooms } from "@/features/architect/use-rooms";
 import { useEnvironmentSensors } from "@/features/environment/use-environment-sensors";
@@ -84,6 +85,10 @@ function RoomDrawing({
 		<Dialog>
 			<Dialog.Trigger
 				render={<button type="button" />}
+				data-wall-top={room.walls.top}
+				data-wall-left={room.walls.left}
+				data-wall-right={room.walls.right}
+				data-wall-bottom={room.walls.bottom}
 				className={cn(
 					"@container",
 					"cursor-pointer",
@@ -92,15 +97,26 @@ function RoomDrawing({
 					"text-center transition-colors",
 					"hover:bg-primary/15",
 					"hover:border-3",
-					"border-foreground/50",
 				)}
 				style={{
 					backgroundColor:
 						room.color ?? "color-mix(in oklab, var(--secondary) 15%, transparent)",
-					borderTopStyle: room.walls.top ? "solid" : "dotted",
-					borderLeftStyle: room.walls.left ? "solid" : "dotted",
-					borderRightStyle: room.walls.right ? "solid" : "dotted",
-					borderBottomStyle: room.walls.bottom ? "solid" : "dotted",
+					borderTopStyle: room.walls.top ? "solid" : "dashed",
+					borderLeftStyle: room.walls.left ? "solid" : "dashed",
+					borderRightStyle: room.walls.right ? "solid" : "dashed",
+					borderBottomStyle: room.walls.bottom ? "solid" : "dashed",
+					borderTopColor: room.walls.top
+						? "var(--foreground)"
+						: "color-mix(in oklab, var(--foreground) 15%, transparent)",
+					borderLeftColor: room.walls.left
+						? "var(--foreground)"
+						: "color-mix(in oklab, var(--foreground) 15%, transparent)",
+					borderRightColor: room.walls.right
+						? "var(--foreground)"
+						: "color-mix(in oklab, var(--foreground) 15%, transparent)",
+					borderBottomColor: room.walls.bottom
+						? "var(--foreground)"
+						: "color-mix(in oklab, var(--foreground) 15%, transparent)",
 					position: "absolute",
 					top: room.layout.y * GRID_SIZE,
 					left: room.layout.x * GRID_SIZE,
@@ -181,18 +197,10 @@ function RoomDrawing({
 									{environmentSensor.thermometer.lastUpdated && (
 										<>
 											<Separator className="bg-border h-4" orientation="vertical" />
-											<div className="text-muted">
-												màj:{" "}
-												{new Date(
-													environmentSensor.thermometer.lastUpdated,
-												).toLocaleDateString("fr-FR", {
-													weekday: "short",
-													day: "2-digit",
-													month: "short",
-													hour: "2-digit",
-													minute: "2-digit",
-													second: "2-digit",
-												})}
+											<div className="text-muted-foreground">
+												<LastUpdatedDescription
+													lastUpdated={environmentSensor.thermometer.lastUpdated}
+												/>
 											</div>
 										</>
 									)}
@@ -212,18 +220,10 @@ function RoomDrawing({
 									{environmentSensor.hygrometer.lastUpdated && (
 										<>
 											<Separator className="bg-border h-4" orientation="vertical" />
-											<div className="text-muted">
-												màj:{" "}
-												{new Date(
-													environmentSensor.hygrometer.lastUpdated,
-												).toLocaleDateString("fr-FR", {
-													weekday: "short",
-													day: "2-digit",
-													month: "short",
-													hour: "2-digit",
-													minute: "2-digit",
-													second: "2-digit",
-												})}
+											<div className="text-muted-foreground">
+												<LastUpdatedDescription
+													lastUpdated={environmentSensor.hygrometer.lastUpdated}
+												/>
 											</div>
 										</>
 									)}
@@ -243,18 +243,10 @@ function RoomDrawing({
 									{environmentSensor.barometer.lastUpdated && (
 										<>
 											<Separator className="bg-border h-4" orientation="vertical" />
-											<div className="text-muted">
-												màj:{" "}
-												{new Date(
-													environmentSensor.barometer.lastUpdated,
-												).toLocaleDateString("fr-FR", {
-													weekday: "short",
-													day: "2-digit",
-													month: "short",
-													hour: "2-digit",
-													minute: "2-digit",
-													second: "2-digit",
-												})}
+											<div className="text-muted-foreground">
+												<LastUpdatedDescription
+													lastUpdated={environmentSensor.barometer.lastUpdated}
+												/>
 											</div>
 										</>
 									)}

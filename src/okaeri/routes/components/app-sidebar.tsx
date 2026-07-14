@@ -1,11 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import {
-	HomeIcon,
-	LandmarkIcon,
-	Lightbulb,
-	SunSnowIcon,
-	ThermometerIcon,
-} from "lucide-react";
+import { HomeIcon, LandmarkIcon, MapIcon } from "lucide-react";
 import { Separator, Sidebar, Tooltip, cn, useSidebar } from "shanty-ui";
 
 function AppSidebar() {
@@ -35,20 +29,9 @@ function AppSidebar() {
 							<HomeIcon /> Dashboard
 						</Sidebar.Item>
 					</Tooltip>
-					<Separator className="bg-border my-4" />
-					<Tooltip content="Éclairage">
-						<Sidebar.Item render={<Link to="/lighting" />}>
-							<Lightbulb /> Éclairage
-						</Sidebar.Item>
-					</Tooltip>
-					<Tooltip content="Confort">
-						<Sidebar.Item render={<Link to="/comfort" />}>
-							<ThermometerIcon /> Confort
-						</Sidebar.Item>
-					</Tooltip>
-					<Tooltip content="Conditions météo">
-						<Sidebar.Item render={<Link to="/weather" />}>
-							<SunSnowIcon /> Conditions météo
+					<Tooltip content="Plan">
+						<Sidebar.Item render={<Link to="/map" />}>
+							<MapIcon /> Plan
 						</Sidebar.Item>
 					</Tooltip>
 				</div>

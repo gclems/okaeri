@@ -1,8 +1,8 @@
 export interface Room {
 	id: string;
 	name: string;
-	haAreaId: string | null;
-	haEnvironmentSensorDeviceId: string | null;
+	haAreaId?: string | null;
+	haEnvironmentSensorDeviceId?: string | null;
 	color: string;
 	layout: {
 		x: number;

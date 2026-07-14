@@ -9,7 +9,7 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { persistRooms } from "#/server/architect/room-functions";
-import type { Room } from "#/shared/architect/architect-types";
+import type { Room } from "#/shared/architect-types";
 import type {
 	HassAreaRegistryEntry,
 	HassDeviceRegistryEntry,
@@ -133,7 +133,18 @@ export function HomeArchitectProvider({
 	});
 
 	const save = useCallback(async () => {
-		await saveMutation.mutateAsync(Object.values(rooms));
+		const data = Object.values(rooms);
+		// convert empty strings to null for all rooms properties
+		data.forEach((room) => {
+			if (room.haAreaId === "") {
+				room.haAreaId = null;
+			}
+			if (room.haEnvironmentSensorDeviceId === "") {
+				room.haEnvironmentSensorDeviceId = null;
+			}
+		});
+
+		await saveMutation.mutateAsync(data);
 		setChanged(false);
 	}, [rooms, saveMutation]);
 

@@ -1,18 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { DashboardSunPanel } from "@/features/sun/components/dashboard-sun-panel";
-import { HomeBlueprints } from "@/routes/(dashboard)/components/home-blueprints";
+import { ComfortPanel } from "@/routes/(dashboard)/components/comfort-panel";
 import { LightGroupsPanel } from "@/routes/(dashboard)/components/light-groups-panel";
+import { WeatherPanel } from "@/routes/(dashboard)/components/weather-panel";
 
-export const Route = createFileRoute("/(dashboard)/")({ component: Home });
+export const Route = createFileRoute("/(dashboard)/")({
+	component: RouteComponent,
+});
 
-function Home() {
+function RouteComponent() {
 	return (
-		<div className="flex items-start gap-x-6">
-			<HomeBlueprints />
-			<div className="w-100 space-y-4">
-				<DashboardSunPanel />
+		<div className="space-y-6 @container">
+			<div className="grid gap-4 @xl:grid-cols-2 @4xl:grid-cols-3">
 				<LightGroupsPanel />
+				<ComfortPanel />
+				<WeatherPanel />
 			</div>
 		</div>
 	);

@@ -9,23 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as LightingRouteRouteImport } from './routes/lighting/route'
-import { Route as LightingIndexRouteImport } from './routes/lighting/index'
+import { Route as MapIndexRouteImport } from './routes/map/index'
 import { Route as dashboardIndexRouteImport } from './routes/(dashboard)/index'
 import { Route as SettingsHomeArchitectRouteRouteImport } from './routes/settings/home-architect/route'
 import { Route as SettingsHomeArchitectIndexRouteImport } from './routes/settings/home-architect/index'
 import { Route as ApiLightingEventsRouteImport } from './routes/api/lighting/events'
 import { Route as ApiEnvironmentEventsRouteImport } from './routes/api/environment/events'
 
-const LightingRouteRoute = LightingRouteRouteImport.update({
-  id: '/lighting',
-  path: '/lighting',
+const MapIndexRoute = MapIndexRouteImport.update({
+  id: '/map/',
+  path: '/map/',
   getParentRoute: () => rootRouteImport,
-} as any)
-const LightingIndexRoute = LightingIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => LightingRouteRoute,
 } as any)
 const dashboardIndexRoute = dashboardIndexRouteImport.update({
   id: '/(dashboard)/',
@@ -56,27 +50,25 @@ const ApiEnvironmentEventsRoute = ApiEnvironmentEventsRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/lighting': typeof LightingRouteRouteWithChildren
   '/settings/home-architect': typeof SettingsHomeArchitectRouteRouteWithChildren
   '/': typeof dashboardIndexRoute
-  '/lighting/': typeof LightingIndexRoute
+  '/map/': typeof MapIndexRoute
   '/api/environment/events': typeof ApiEnvironmentEventsRoute
   '/api/lighting/events': typeof ApiLightingEventsRoute
   '/settings/home-architect/': typeof SettingsHomeArchitectIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof dashboardIndexRoute
-  '/lighting': typeof LightingIndexRoute
+  '/map': typeof MapIndexRoute
   '/api/environment/events': typeof ApiEnvironmentEventsRoute
   '/api/lighting/events': typeof ApiLightingEventsRoute
   '/settings/home-architect': typeof SettingsHomeArchitectIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/lighting': typeof LightingRouteRouteWithChildren
   '/settings/home-architect': typeof SettingsHomeArchitectRouteRouteWithChildren
   '/(dashboard)/': typeof dashboardIndexRoute
-  '/lighting/': typeof LightingIndexRoute
+  '/map/': typeof MapIndexRoute
   '/api/environment/events': typeof ApiEnvironmentEventsRoute
   '/api/lighting/events': typeof ApiLightingEventsRoute
   '/settings/home-architect/': typeof SettingsHomeArchitectIndexRoute
@@ -84,54 +76,45 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/lighting'
     | '/settings/home-architect'
     | '/'
-    | '/lighting/'
+    | '/map/'
     | '/api/environment/events'
     | '/api/lighting/events'
     | '/settings/home-architect/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/lighting'
+    | '/map'
     | '/api/environment/events'
     | '/api/lighting/events'
     | '/settings/home-architect'
   id:
     | '__root__'
-    | '/lighting'
     | '/settings/home-architect'
     | '/(dashboard)/'
-    | '/lighting/'
+    | '/map/'
     | '/api/environment/events'
     | '/api/lighting/events'
     | '/settings/home-architect/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  LightingRouteRoute: typeof LightingRouteRouteWithChildren
   SettingsHomeArchitectRouteRoute: typeof SettingsHomeArchitectRouteRouteWithChildren
   dashboardIndexRoute: typeof dashboardIndexRoute
+  MapIndexRoute: typeof MapIndexRoute
   ApiEnvironmentEventsRoute: typeof ApiEnvironmentEventsRoute
   ApiLightingEventsRoute: typeof ApiLightingEventsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/lighting': {
-      id: '/lighting'
-      path: '/lighting'
-      fullPath: '/lighting'
-      preLoaderRoute: typeof LightingRouteRouteImport
+    '/map/': {
+      id: '/map/'
+      path: '/map'
+      fullPath: '/map/'
+      preLoaderRoute: typeof MapIndexRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/lighting/': {
-      id: '/lighting/'
-      path: '/'
-      fullPath: '/lighting/'
-      preLoaderRoute: typeof LightingIndexRouteImport
-      parentRoute: typeof LightingRouteRoute
     }
     '/(dashboard)/': {
       id: '/(dashboard)/'
@@ -171,18 +154,6 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface LightingRouteRouteChildren {
-  LightingIndexRoute: typeof LightingIndexRoute
-}
-
-const LightingRouteRouteChildren: LightingRouteRouteChildren = {
-  LightingIndexRoute: LightingIndexRoute,
-}
-
-const LightingRouteRouteWithChildren = LightingRouteRoute._addFileChildren(
-  LightingRouteRouteChildren,
-)
-
 interface SettingsHomeArchitectRouteRouteChildren {
   SettingsHomeArchitectIndexRoute: typeof SettingsHomeArchitectIndexRoute
 }
@@ -198,9 +169,9 @@ const SettingsHomeArchitectRouteRouteWithChildren =
   )
 
 const rootRouteChildren: RootRouteChildren = {
-  LightingRouteRoute: LightingRouteRouteWithChildren,
   SettingsHomeArchitectRouteRoute: SettingsHomeArchitectRouteRouteWithChildren,
   dashboardIndexRoute: dashboardIndexRoute,
+  MapIndexRoute: MapIndexRoute,
   ApiEnvironmentEventsRoute: ApiEnvironmentEventsRoute,
   ApiLightingEventsRoute: ApiLightingEventsRoute,
 }

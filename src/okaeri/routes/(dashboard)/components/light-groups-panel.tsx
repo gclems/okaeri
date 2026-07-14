@@ -1,6 +1,9 @@
-import { faLightbulb, faPowerOff } from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
+
+import { faPowerOff } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Card } from "shanty-ui";
+import { AnimatePresence, motion } from "motion/react";
+import { Button, Fieldset } from "shanty-ui";
 
 import { turnOffLight } from "#/server/lighting/lighting-functions";
 import { useLightGroups } from "@/features/lighting/use-light-groups";
@@ -8,6 +11,8 @@ import { useLightGroups } from "@/features/lighting/use-light-groups";
 import { LightGroupCard } from "./light-group-card";
 
 export function LightGroupsPanel() {
+	const [switchOffButtonHovered, setSwitchOffButtonHovered] = useState(false);
+
 	const lightGroups = useLightGroups();
 
 	const turnAllGroupsOff = () => {
@@ -17,18 +22,35 @@ export function LightGroupsPanel() {
 	};
 
 	return (
-		<Card>
-			<Card.Header
-				title={
-					<div className="flex items-center gap-2">
-						<span className="text-energy">
-							<FontAwesomeIcon icon={faLightbulb} />
-						</span>
-						Éclairage
-					</div>
-				}
-			/>
-			<Card.Body>
+		<Fieldset
+			legend={
+				<div className="flex items-center justify-between">
+					<div>Éclairage</div>
+					<Button
+						variant="ghost"
+						color="destructive"
+						onClick={turnAllGroupsOff}
+						onMouseEnter={() => setSwitchOffButtonHovered(true)}
+						onMouseLeave={() => setSwitchOffButtonHovered(false)}
+					>
+						<AnimatePresence>
+							{switchOffButtonHovered && (
+								<motion.span
+									className="overflow-hidden whitespace-nowrap"
+									initial={{ width: 0 }}
+									animate={{ width: "auto" }}
+									exit={{ width: 0 }}
+								>
+									Tout éteindre&nbsp;
+								</motion.span>
+							)}
+						</AnimatePresence>
+						<FontAwesomeIcon icon={faPowerOff} />
+					</Button>
+				</div>
+			}
+		>
+			<div className="space-y-4">
 				<ul className="space-y-2">
 					{lightGroups.map((group) => (
 						<li key={group.id}>
@@ -36,18 +58,41 @@ export function LightGroupsPanel() {
 						</li>
 					))}
 				</ul>
-			</Card.Body>
-			<Card.Footer>
-				<Button
-					variant="light"
-					color="destructive"
-					className="w-full text-right"
-					onClick={turnAllGroupsOff}
-				>
-					Tout éteindre&nbsp;
-					<FontAwesomeIcon icon={faPowerOff} />
-				</Button>
-			</Card.Footer>
-		</Card>
+			</div>
+		</Fieldset>
 	);
+	// return (
+	// 	<Card>
+	// 		<Card.Header
+	// 			title={
+	// 				<div className="flex items-center gap-2">
+	// 					<span className="text-energy">
+	// 						<FontAwesomeIcon icon={faLightbulb} />
+	// 					</span>
+	// 					Éclairage
+	// 				</div>
+	// 			}
+	// 		/>
+	// 		<Card.Body>
+	// 			<ul className="space-y-2">
+	// 				{lightGroups.map((group) => (
+	// 					<li key={group.id}>
+	// 						<LightGroupCard group={group} />
+	// 					</li>
+	// 				))}
+	// 			</ul>
+	// 		</Card.Body>
+	// 		<Card.Footer>
+	// 			<Button
+	// 				variant="light"
+	// 				color="destructive"
+	// 				className="w-full text-right"
+	// 				onClick={turnAllGroupsOff}
+	// 			>
+	// 				Tout éteindre&nbsp;
+	// 				<FontAwesomeIcon icon={faPowerOff} />
+	// 			</Button>
+	// 		</Card.Footer>
+	// 	</Card>
+	// );
 }

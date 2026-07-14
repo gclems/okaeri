@@ -1,7 +1,7 @@
 import { inArray } from "drizzle-orm";
 
-import { roomRowToRoom } from "#/shared/architect/architect-room-mapper";
-import type { Room } from "#/shared/architect/architect-schemas";
+import { roomRowToRoom } from "#/server/architect/architect-room-mapper";
+import type { Room } from "#/server/architect/architect-schemas";
 
 import { db } from "../db/client";
 import { roomTable } from "../db/schema";

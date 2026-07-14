@@ -12,7 +12,7 @@ type RetryTimer = ReturnType<typeof setTimeout> & {
 	unref?: () => void;
 };
 
-export default function domoPlugin(nitroApp: NitroApp): void {
+export default async function domoPlugin(nitroApp: NitroApp): Promise<void> {
 	if (process.env.TSS_PRERENDERING === "true") {
 		return;
 	}
@@ -48,6 +48,7 @@ export default function domoPlugin(nitroApp: NitroApp): void {
 	};
 
 	start();
+	await domo.sun.start();
 
 	nitroApp.hooks.hook("close", () => {
 		stopping = true;
@@ -56,6 +57,7 @@ export default function domoPlugin(nitroApp: NitroApp): void {
 			clearTimeout(retryTimer);
 		}
 
+		domo.sun.stop();
 		domo.stop();
 	});
 }

@@ -18,7 +18,7 @@ export const roomSchema = z.object({
 	id: z.string().uuid(),
 	name: z.string().trim().min(1).max(100),
 	haAreaId: z.string().trim().min(1).nullable(),
-	haEnvironmentSensorDeviceId: z.string().trim().min(1).nullable(),
+	haEnvironmentSensorDeviceId: z.string().trim().min(1).nullable().optional(),
 	color: z.string(),
 	layout: roomLayoutSchema,
 	walls: roomWallsSchema,

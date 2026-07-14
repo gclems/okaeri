@@ -11,6 +11,7 @@ import {
 } from "#/server/home-assistant-client";
 import { LightingService } from "#/server/lighting/lighting-service";
 import { RegistryService } from "#/server/registry/registry-service";
+import { SunService } from "#/server/sun/sun-service";
 import type {
 	DomoEntityState,
 	DomoSnapshot,
@@ -22,6 +23,7 @@ export class Domo {
 	public readonly registry: RegistryService;
 	public readonly lighting: LightingService;
 	public readonly environment: EnvironmentService;
+	public readonly sun: SunService;
 
 	private snapshot: DomoSnapshot = {
 		connectionState: "idle",
@@ -71,6 +73,7 @@ export class Domo {
 		this.registry = new RegistryService(this.homeAssistant);
 		this.lighting = new LightingService(this.homeAssistant, this.registry);
 		this.environment = new EnvironmentService(this.homeAssistant, this.registry);
+		this.sun = new SunService();
 	}
 
 	public async start(): Promise<void> {

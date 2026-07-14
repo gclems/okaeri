@@ -5,4 +5,4 @@ allowBuilds:
   esbuild: true
   lightningcss: true
 minimumReleaseAgeExclude:
-  - shanty-ui@2.0.0-alpha.35 || 2.0.0-alpha.36
+  - shanty-ui@2.0.0-alpha.35 || 2.0.0-alpha.36 || 2.0.0-alpha.37 || 2.0.0-alpha.38
