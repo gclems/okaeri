@@ -11,7 +11,13 @@ export type Threshold = {
 	level: ThresholdLevel;
 };
 
-export const INTERIOR_TEMPERATURE_THRESHOLDS: Threshold[] = [];
+export const INTERIOR_TEMPERATURE_THRESHOLDS: Threshold[] = [
+	{ max: 16, level: "critical_low" },
+	{ min: 16, max: 18, level: "warning_low" },
+	{ min: 18, max: 24, level: "normal" },
+	{ min: 24, max: 26, level: "warning_high" },
+	{ min: 26, level: "critical_high" },
+];
 
 export const INTERIOR_HUMIDITY_THRESHOLDS: Threshold[] = [
 	{ max: 35, level: "critical_low" },

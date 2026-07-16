@@ -4,10 +4,12 @@ import {
 	faTint,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Card, Fieldset, Separator, cn } from "shanty-ui";
+import { Card, Fieldset } from "shanty-ui";
 
 import { QueryLoader } from "@/components/query-loader";
+import { ThresholdIcon } from "@/components/threshold-icon";
 import { useRooms } from "@/features/architect/use-rooms";
+import { getThresholdLevel } from "@/features/environment/environment-functions";
 import { useEnvironmentSensors } from "@/features/environment/use-environment-sensors";
 
 function ComfortPanel() {
@@ -49,16 +51,17 @@ function ComfortPanel() {
 																	</span>
 																</div>
 																<div className="flex items-center gap-x-1">
-																	<span
-																		className={cn("text-metric font-semibold", {
-																			"text-temperature-excessive": device.thermometer.value > 25,
-																			"text-temperature-low": device.thermometer.value < 17,
-																		})}
-																	>
+																	<span className="text-metric font-semibold">
+																		<ThresholdIcon
+																			className="inline"
+																			level={getThresholdLevel(
+																				"interior_temperature",
+																				device.thermometer.value,
+																			)}
+																		/>
 																		{device.thermometer.value}
 																	</span>
-																	<Separator orientation="vertical" className="h-4 bg-border" />
-																	<span className="text-metric text-sm text-muted-foreground">
+																	<span className="text-metric text-xs text-muted-foreground">
 																		{device.apparentTemperature?.value}
 																		{device.apparentTemperature?.unit}
 																	</span>
@@ -76,7 +79,16 @@ function ComfortPanel() {
 																{device.hygrometer.unitOfMeasurement}
 															</span>
 														</div>
-														<span className="text-metric">{device.hygrometer.value}</span>
+														<span className="text-metric">
+															<ThresholdIcon
+																className="inline"
+																level={getThresholdLevel(
+																	"interior_humidity",
+																	device.hygrometer.value,
+																)}
+															/>
+															{device.hygrometer.value}
+														</span>
 													</div>
 												)}
 
