@@ -22,6 +22,11 @@ export interface DomoBarometer extends DomoSensorEntity {
 	unitOfMeasurement: "hPa" | "inHg" | "mmHg";
 }
 
+export interface ApparentTemperature {
+	value: number;
+	unit: "°C" | "°F";
+}
+
 export interface DomoEnvironmentSensor {
 	id: string;
 	areaId: string;
@@ -30,6 +35,8 @@ export interface DomoEnvironmentSensor {
 	thermometer: DomoThermometer | null;
 	hygrometer: DomoHygrometer | null;
 	barometer: DomoBarometer | null;
+
+	apparentTemperature: ApparentTemperature | null;
 }
 
 export interface DomoEnvironmentSnapshot {

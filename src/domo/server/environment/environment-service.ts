@@ -12,6 +12,7 @@ import {
 import type { HomeAssistantClient } from "#/server/home-assistant-client";
 import type { RegistryService } from "#/server/registry/registry-service";
 import type {
+	ApparentTemperature,
 	DomoBarometer,
 	DomoEnvironmentSensor,
 	DomoEnvironmentSnapshot,
@@ -79,6 +80,8 @@ export class EnvironmentService {
 					thermometer: null,
 					hygrometer: null,
 					barometer: null,
+
+					apparentTemperature: null,
 				};
 			}
 
@@ -90,6 +93,14 @@ export class EnvironmentService {
 				sensor.hygrometer = mapHygrometer(entity, registryEntity);
 			} else if (isBarometer(entity)) {
 				sensor.barometer = mapBarometer(entity, registryEntity);
+			}
+
+			// Calculate apparentTemperature if both thermometer and hygrometer are present
+			if (sensor.thermometer && sensor.hygrometer) {
+				sensor.apparentTemperature = calculateApparentTemperature(
+					sensor.thermometer,
+					sensor.hygrometer,
+				);
 			}
 		}
 
@@ -165,4 +176,40 @@ function areMeasurementsEqual(
 		a.lastChanged === b.lastChanged &&
 		a.lastUpdated === b.lastUpdated
 	);
+}
+
+/**
+ * Uses Steadman algorithm
+ *   AT=−1,3+0,92T+2,2e
+ */
+function calculateApparentTemperature(
+	thermometer: DomoThermometer,
+	hygrometer: DomoHygrometer,
+): ApparentTemperature {
+	if (!Number.isFinite(thermometer.value)) {
+		throw new Error("Temperature must be a finite number");
+	}
+
+	if (
+		!Number.isFinite(hygrometer.value) ||
+		hygrometer.value < 0 ||
+		hygrometer.value > 100
+	) {
+		throw new Error("Relative humidity must be between 0 and 100");
+	}
+
+	const temperature = thermometer.value;
+	const relativeHumidity = hygrometer.value;
+
+	const saturationVaporPressure =
+		0.6105 * Math.exp((17.27 * temperature) / (237.7 + temperature));
+
+	const vaporPressure = (relativeHumidity / 100) * saturationVaporPressure;
+
+	const apparentTemperature = -1.3 + 0.92 * temperature + 2.2 * vaporPressure;
+
+	return {
+		value: Math.round(apparentTemperature * 10) / 10,
+		unit: thermometer.unitOfMeasurement,
+	};
 }

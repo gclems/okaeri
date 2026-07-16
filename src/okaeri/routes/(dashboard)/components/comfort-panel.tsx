@@ -4,7 +4,7 @@ import {
 	faTint,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Card, Fieldset, cn } from "shanty-ui";
+import { Card, Fieldset, Separator, cn } from "shanty-ui";
 
 import { QueryLoader } from "@/components/query-loader";
 import { useRooms } from "@/features/architect/use-rooms";
@@ -48,14 +48,21 @@ function ComfortPanel() {
 																		{device.thermometer.unitOfMeasurement}
 																	</span>
 																</div>
-																<span
-																	className={cn("text-metric font-semibold", {
-																		"text-temperature-excessive": device.thermometer.value > 25,
-																		"text-temperature-low": device.thermometer.value < 17,
-																	})}
-																>
-																	{device.thermometer.value}
-																</span>
+																<div className="flex items-center gap-x-1">
+																	<span
+																		className={cn("text-metric font-semibold", {
+																			"text-temperature-excessive": device.thermometer.value > 25,
+																			"text-temperature-low": device.thermometer.value < 17,
+																		})}
+																	>
+																		{device.thermometer.value}
+																	</span>
+																	<Separator orientation="vertical" className="h-4 bg-border" />
+																	<span className="text-metric text-sm text-muted-foreground">
+																		{device.apparentTemperature?.value}
+																		{device.apparentTemperature?.unit}
+																	</span>
+																</div>
 															</div>
 														</Card.Body>
 													</Card>

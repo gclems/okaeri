@@ -94,7 +94,7 @@ function SunPanelContent({ sun }: { sun: Sun }) {
 			<SunValue icon={<SunriseIcon />} value={sun?.sunrise_at.toISOString()} />
 			<SunValue icon={<SunIcon />} value={sun?.solarnoon_at.toISOString()} />
 			<SunValue icon={<SunsetIcon />} value={sun?.sunset_at.toISOString()} />
-			<div className="text-heading">
+			<div className="text-heading text-center">
 				{new Date().toLocaleDateString("fr-FR", {
 					weekday: "short",
 					day: "2-digit",

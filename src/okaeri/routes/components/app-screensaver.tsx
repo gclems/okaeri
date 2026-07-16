@@ -3,9 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
 import { RollingNumber } from "@/components/rolling-number";
-import { useClock } from "@/features/use-clock";
+import { useClock } from "@/features/clock/use-clock";
 
-const INACTIVITY_DELAY = 3_000;
+const INACTIVITY_DELAY = 30_000;
 
 function ScreensaverClock() {
 	const now = useClock();

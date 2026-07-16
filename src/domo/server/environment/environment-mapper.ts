@@ -19,12 +19,6 @@ function getStringAttribute(entity: HassEntity, name: string): string | null {
 	return typeof value === "string" ? value : null;
 }
 
-function getNumberAttribute(entity: HassEntity, name: string): number | null {
-	const value = entity.attributes[name];
-
-	return typeof value === "number" && Number.isFinite(value) ? value : null;
-}
-
 function mapName(entity: HassEntity, registry: ResolvedEntityRegistry): string {
 	return (
 		registry.entity?.name ??
