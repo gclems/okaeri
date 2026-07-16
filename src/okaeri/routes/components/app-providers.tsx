@@ -8,6 +8,8 @@ import { ShantyRoot } from "shanty-ui";
 import { useDomoSync } from "@/features/domo-sync";
 import { useTheme } from "@/themes/use-theme";
 
+import { AppScreensaver } from "./app-screensaver";
+
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
@@ -28,6 +30,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
 		<QueryClientProvider client={queryClient}>
 			<ShantyRoot toast tooltip sidebar={{ defaultOpen: false }}>
 				{children}
+				<AppScreensaver />
 			</ShantyRoot>
 		</QueryClientProvider>
 	);
