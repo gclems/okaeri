@@ -34,6 +34,10 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			{
 				title: import.meta.env.DEV ? "Okaeri (DEV)" : "Okaeri",
 			},
+			{
+				name: "theme-color",
+				content: "#000000",
+			},
 		],
 		links: [
 			{
@@ -44,17 +48,27 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				rel: "icon",
 				type: "image/png",
 				sizes: "32x32",
-				href: "/favicon-32x32.png?v=2",
+				href: "/icons/favicon-32x32.png",
 			},
 			{
 				rel: "icon",
 				type: "image/png",
 				sizes: "16x16",
-				href: "/favicon-16x16.png?v=2",
+				href: "/icons/favicon-16x16.png",
+			},
+			{
+				rel: "icon",
+				type: "image/x-icon",
+				href: "/icons/favicon.ico",
 			},
 			{
 				rel: "manifest",
 				href: "/manifest.json",
+			},
+			{
+				rel: "apple-touch-icon",
+				sizes: "180x180",
+				href: "/icons/apple-icon-180x180.png",
 			},
 		],
 	}),
