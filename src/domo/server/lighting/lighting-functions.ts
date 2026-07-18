@@ -24,6 +24,18 @@ const setColorSchema = z.object({
 	}),
 });
 
+const setColorAndBrightnessSchema = z.object({
+	entityId: lightIdSchema,
+
+	color: z.object({
+		red: z.number().int().min(0).max(255),
+		green: z.number().int().min(0).max(255),
+		blue: z.number().int().min(0).max(255),
+	}),
+
+	brightness: z.number().min(0).max(1),
+});
+
 export const getLightingSnapshot = createServerFn({
 	method: "GET",
 }).handler(async () => {
@@ -89,6 +101,26 @@ export const setLightBrightness = createServerFn({
 		await domo.whenReady();
 
 		await domo.lighting.setBrightness(data.entityId, data.brightness);
+
+		return {
+			success: true,
+		};
+	});
+
+export const setLightColorAndBrightness = createServerFn({
+	method: "POST",
+})
+	.validator(setColorAndBrightnessSchema)
+	.handler(async ({ data }) => {
+		const domo = getDomo();
+
+		await domo.whenReady();
+
+		await domo.lighting.setColorAndBrightness(
+			data.entityId,
+			data.color,
+			data.brightness,
+		);
 
 		return {
 			success: true,

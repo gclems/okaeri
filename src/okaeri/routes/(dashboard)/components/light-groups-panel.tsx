@@ -61,38 +61,4 @@ export function LightGroupsPanel() {
 			</div>
 		</Fieldset>
 	);
-	// return (
-	// 	<Card>
-	// 		<Card.Header
-	// 			title={
-	// 				<div className="flex items-center gap-2">
-	// 					<span className="text-energy">
-	// 						<FontAwesomeIcon icon={faLightbulb} />
-	// 					</span>
-	// 					Éclairage
-	// 				</div>
-	// 			}
-	// 		/>
-	// 		<Card.Body>
-	// 			<ul className="space-y-2">
-	// 				{lightGroups.map((group) => (
-	// 					<li key={group.id}>
-	// 						<LightGroupCard group={group} />
-	// 					</li>
-	// 				))}
-	// 			</ul>
-	// 		</Card.Body>
-	// 		<Card.Footer>
-	// 			<Button
-	// 				variant="light"
-	// 				color="destructive"
-	// 				className="w-full text-right"
-	// 				onClick={turnAllGroupsOff}
-	// 			>
-	// 				Tout éteindre&nbsp;
-	// 				<FontAwesomeIcon icon={faPowerOff} />
-	// 			</Button>
-	// 		</Card.Footer>
-	// 	</Card>
-	// );
 }

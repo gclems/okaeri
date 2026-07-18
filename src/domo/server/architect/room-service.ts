@@ -24,8 +24,6 @@ export async function getRoomsById(): Promise<Record<string, Room>> {
 	return findAllRoomsById();
 }
 
-export async function saveRooms(rooms: Room[]): Promise<Record<string, Room>> {
+export async function saveRooms(rooms: Room[]): Promise<void> {
 	await replaceAllRooms(rooms);
-
-	return Object.fromEntries(rooms.map((room) => [room.id, room]));
 }

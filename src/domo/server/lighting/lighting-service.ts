@@ -133,9 +133,15 @@ export class LightingService {
 			serviceData.color_temp_kelvin = options.colorTemperature;
 		}
 
-		await this.homeAssistant.callService("light", "turn_on", serviceData, {
-			entity_id: id,
-		});
+		if (this.shouldBeTurnedOff(options.color, options.brightness)) {
+			await this.homeAssistant.callService("light", "turn_off", serviceData, {
+				entity_id: id,
+			});
+		} else {
+			await this.homeAssistant.callService("light", "turn_on", serviceData, {
+				entity_id: id,
+			});
+		}
 	}
 
 	public async turnOff(id: string): Promise<void> {
@@ -162,6 +168,14 @@ export class LightingService {
 		await this.turnOn(id, { color });
 	}
 
+	public async setColorAndBrightness(
+		id: string,
+		color: RgbColor,
+		brightness: number,
+	): Promise<void> {
+		await this.turnOn(id, { color, brightness });
+	}
+
 	private normalizeBrightnessForHa(brightness: number): number {
 		const normalized = Math.min(1, Math.max(0, brightness));
 
@@ -178,6 +192,25 @@ export class LightingService {
 		for (const listener of this.listeners) {
 			listener(this.snapshot);
 		}
+	}
+
+	private shouldBeTurnedOff(
+		color?: RgbColor | null,
+		brightness?: number | null,
+	): boolean {
+		if (!color && !brightness) {
+			return true;
+		}
+
+		if (!!brightness && brightness <= 0) {
+			return true;
+		}
+
+		if (!!color && color.red === 0 && color.green === 0 && color.blue === 0) {
+			return true;
+		}
+
+		return false;
 	}
 
 	private areEntitiesEqual<

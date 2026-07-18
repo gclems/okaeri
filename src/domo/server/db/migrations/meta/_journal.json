@@ -29,6 +29,20 @@
       "when": 1784030134740,
       "tag": "0003_high_chimera",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1784279474181,
+      "tag": "0004_demonic_terror",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1784279789437,
+      "tag": "0005_fancy_freak",
+      "breakpoints": true
     }
   ]
 }

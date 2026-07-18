@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Card, Fieldset } from "shanty-ui";
 
 import { QueryLoader } from "@/components/query-loader";
+import { RollingNumber } from "@/components/rolling-number";
 import { ThresholdIcon } from "@/components/threshold-icon";
 import { useRooms } from "@/features/architect/use-rooms";
 import { getThresholdLevel } from "@/features/environment/environment-functions";
@@ -50,7 +51,7 @@ function ComfortPanel() {
 																		{device.thermometer.unitOfMeasurement}
 																	</span>
 																</div>
-																<div className="flex items-center gap-x-1">
+																<div className="flex items-baseline gap-x-1">
 																	<span className="text-metric font-semibold">
 																		<ThresholdIcon
 																			className="inline"
@@ -59,11 +60,16 @@ function ComfortPanel() {
 																				device.thermometer.value,
 																			)}
 																		/>
-																		{device.thermometer.value}
+																		<RollingNumber
+																			number={device.thermometer.value}
+																			formatter={(value) => value.toFixed(1).toString()}
+																		/>
 																	</span>
 																	<span className="text-metric text-xs text-muted-foreground">
-																		{device.apparentTemperature?.value}
-																		{device.apparentTemperature?.unit}
+																		<RollingNumber
+																			number={device.apparentTemperature?.value ?? 0}
+																			formatter={(value) => value.toFixed(1).toString()}
+																		/>
 																	</span>
 																</div>
 															</div>
@@ -87,7 +93,10 @@ function ComfortPanel() {
 																	device.hygrometer.value,
 																)}
 															/>
-															{device.hygrometer.value}
+															<RollingNumber
+																number={device.hygrometer.value}
+																formatter={(value) => value.toFixed(1).toString()}
+															/>
 														</span>
 													</div>
 												)}
@@ -100,7 +109,9 @@ function ComfortPanel() {
 																{device.barometer.unitOfMeasurement}
 															</span>
 														</div>
-														<span className="text-metric">{device.barometer.value}</span>
+														<span className="text-metric">
+															<RollingNumber number={device.barometer.value} />
+														</span>
 													</div>
 												)}
 											</div>

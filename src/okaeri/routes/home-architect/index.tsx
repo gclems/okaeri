@@ -8,13 +8,13 @@ import {
 	useHomeAssistantAreas,
 } from "@/features/registry/use-home-assistant-areas";
 import { useHomeAssistantDevices } from "@/features/registry/use-home-assistant-devices";
-import { ResetButton } from "@/routes/settings/home-architect/components/reset-button";
-import { RoomProperties } from "@/routes/settings/home-architect/components/room-properties";
-import { RoomsCanvas } from "@/routes/settings/home-architect/components/rooms-canvas";
-import { SubmitButton } from "@/routes/settings/home-architect/components/submit-button";
-import { HomeArchitectProvider } from "@/routes/settings/home-architect/components/use-home-architect";
+import { ResetButton } from "@/routes/home-architect/components/reset-button";
+import { RoomProperties } from "@/routes/home-architect/components/room-properties";
+import { RoomsCanvas } from "@/routes/home-architect/components/rooms-canvas";
+import { SubmitButton } from "@/routes/home-architect/components/submit-button";
+import { HomeArchitectProvider } from "@/routes/home-architect/components/use-home-architect";
 
-export const Route = createFileRoute("/settings/home-architect/")({
+export const Route = createFileRoute("/home-architect/")({
 	loader: ({ context }) =>
 		Promise.all([
 			context.queryClient.ensureQueryData(roomsQueryOptions),

@@ -2,7 +2,7 @@ import { faLightbulb as farLightbulb } from "@fortawesome/free-regular-svg-icons
 import { faLightbulb } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "motion/react";
-import { Card, Switch, cn } from "shanty-ui";
+import { Card, Popover, Switch, cn } from "shanty-ui";
 
 import { toggleLight } from "#/server/lighting/lighting-functions";
 import type { DomoLightGroup } from "#/shared/lighting-types";
@@ -10,6 +10,7 @@ import { AnimatedNumber } from "@/components/animated-number";
 import { QueryLoader } from "@/components/query-loader";
 import { useRooms } from "@/features/architect/use-rooms";
 import { useLightBulbs } from "@/features/lighting/use-light-bulbs";
+import { LightModifier } from "@/routes/components/light-modifier";
 
 function LightGroupCard({ group }: { group: DomoLightGroup }) {
 	const lights = useLightBulbs(group);
@@ -75,32 +76,41 @@ function LightGroupCard({ group }: { group: DomoLightGroup }) {
 					{lights.map((light) => {
 						const isOn = light.state === "on" && !!light.color;
 						return (
-							<div key={light.id} className="w-8 flex flex-col items-center">
-								<div
-									key={isOn ? "on" : "off"}
-									className="size-4 border-2 border-foreground rounded-xl flex items-center justify-center"
-									style={
-										isOn
-											? {
-													backgroundColor: `rgb(${light.color?.red},${light.color?.green},${light.color?.blue})`,
-													borderColor: "var(--foreground)",
-												}
-											: {
-													backgroundColor: "var(--surface)",
-													borderColor: "var(--border)",
-												}
-									}
+							<Popover key={light.id}>
+								<Popover.Trigger
+									render={<div />}
+									nativeButton={false}
+									className="w-8 flex flex-col items-center cursor-pointer"
 								>
-									{light.state !== "on" && <span className="rotate-45">|</span>}
-								</div>
-								<div className="text-xs text-metric">
-									<AnimatedNumber
-										number={(light.brightness || 0) * 100}
-										formatter={(value) => String(Math.ceil(value))}
-									/>
-									%
-								</div>
-							</div>
+									<div
+										key={isOn ? "on" : "off"}
+										className="size-4 border-2 border-foreground rounded-xl flex items-center justify-center"
+										style={
+											isOn
+												? {
+														backgroundColor: `rgb(${light.color?.red},${light.color?.green},${light.color?.blue})`,
+														borderColor: "var(--foreground)",
+													}
+												: {
+														backgroundColor: "var(--surface)",
+														borderColor: "var(--border)",
+													}
+										}
+									>
+										{light.state !== "on" && <span className="rotate-45">|</span>}
+									</div>
+									<div className="text-xs text-metric">
+										<AnimatedNumber
+											number={(light.brightness || 0) * 100}
+											formatter={(value) => String(Math.ceil(value))}
+										/>
+										%
+									</div>
+								</Popover.Trigger>
+								<Popover.Popup>
+									<LightModifier lightBulb={light} />
+								</Popover.Popup>
+							</Popover>
 						);
 					})}
 				</div>

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { HomeIcon, LandmarkIcon, MapIcon } from "lucide-react";
+import { CogIcon, HomeIcon, LandmarkIcon, MapIcon } from "lucide-react";
 import { Separator, Sidebar, Tooltip, cn, useSidebar } from "shanty-ui";
 
 function AppSidebar() {
@@ -7,7 +7,7 @@ function AppSidebar() {
 
 	return (
 		<Sidebar collapsible="icon">
-			<Sidebar.Content>
+			<Sidebar.Content className="flex-1">
 				<button
 					type="button"
 					onClick={() => sidebar.setOpen(!sidebar.open)}
@@ -38,8 +38,15 @@ function AppSidebar() {
 
 				<Separator className="bg-border my-4" />
 
+				<Tooltip content="Paramètres">
+					<Sidebar.Item render={<Link to="/settings" />}>
+						<CogIcon />
+						Paramètres
+					</Sidebar.Item>
+				</Tooltip>
+
 				<Tooltip content="Architecte">
-					<Sidebar.Item render={<Link to="/settings/home-architect" />}>
+					<Sidebar.Item render={<Link to="/home-architect" />}>
 						<LandmarkIcon />
 						Architecte
 					</Sidebar.Item>
