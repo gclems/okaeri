@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { CarPanel } from "@/routes/(dashboard)/components/car-panel";
 import { ComfortPanel } from "@/routes/(dashboard)/components/comfort-panel";
 import { LightGroupsPanel } from "@/routes/(dashboard)/components/light-groups-panel";
 import { WeatherPanel } from "@/routes/(dashboard)/components/weather-panel";
@@ -15,6 +16,7 @@ function RouteComponent() {
 				<LightGroupsPanel />
 				<ComfortPanel />
 				<WeatherPanel />
+				<CarPanel />
 			</div>
 		</div>
 	);

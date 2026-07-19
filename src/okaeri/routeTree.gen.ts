@@ -15,6 +15,7 @@ import { Route as HomeArchitectIndexRouteImport } from './routes/home-architect/
 import { Route as dashboardIndexRouteImport } from './routes/(dashboard)/index'
 import { Route as ApiLightingEventsRouteImport } from './routes/api/lighting/events'
 import { Route as ApiEnvironmentEventsRouteImport } from './routes/api/environment/events'
+import { Route as ApiCarEventsRouteImport } from './routes/api/car.events'
 
 const SettingsIndexRoute = SettingsIndexRouteImport.update({
   id: '/settings/',
@@ -46,12 +47,18 @@ const ApiEnvironmentEventsRoute = ApiEnvironmentEventsRouteImport.update({
   path: '/api/environment/events',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCarEventsRoute = ApiCarEventsRouteImport.update({
+  id: '/api/car/events',
+  path: '/api/car/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof dashboardIndexRoute
   '/home-architect/': typeof HomeArchitectIndexRoute
   '/map/': typeof MapIndexRoute
   '/settings/': typeof SettingsIndexRoute
+  '/api/car/events': typeof ApiCarEventsRoute
   '/api/environment/events': typeof ApiEnvironmentEventsRoute
   '/api/lighting/events': typeof ApiLightingEventsRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/home-architect': typeof HomeArchitectIndexRoute
   '/map': typeof MapIndexRoute
   '/settings': typeof SettingsIndexRoute
+  '/api/car/events': typeof ApiCarEventsRoute
   '/api/environment/events': typeof ApiEnvironmentEventsRoute
   '/api/lighting/events': typeof ApiLightingEventsRoute
 }
@@ -69,6 +77,7 @@ export interface FileRoutesById {
   '/home-architect/': typeof HomeArchitectIndexRoute
   '/map/': typeof MapIndexRoute
   '/settings/': typeof SettingsIndexRoute
+  '/api/car/events': typeof ApiCarEventsRoute
   '/api/environment/events': typeof ApiEnvironmentEventsRoute
   '/api/lighting/events': typeof ApiLightingEventsRoute
 }
@@ -79,6 +88,7 @@ export interface FileRouteTypes {
     | '/home-architect/'
     | '/map/'
     | '/settings/'
+    | '/api/car/events'
     | '/api/environment/events'
     | '/api/lighting/events'
   fileRoutesByTo: FileRoutesByTo
@@ -87,6 +97,7 @@ export interface FileRouteTypes {
     | '/home-architect'
     | '/map'
     | '/settings'
+    | '/api/car/events'
     | '/api/environment/events'
     | '/api/lighting/events'
   id:
@@ -95,6 +106,7 @@ export interface FileRouteTypes {
     | '/home-architect/'
     | '/map/'
     | '/settings/'
+    | '/api/car/events'
     | '/api/environment/events'
     | '/api/lighting/events'
   fileRoutesById: FileRoutesById
@@ -104,6 +116,7 @@ export interface RootRouteChildren {
   HomeArchitectIndexRoute: typeof HomeArchitectIndexRoute
   MapIndexRoute: typeof MapIndexRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
+  ApiCarEventsRoute: typeof ApiCarEventsRoute
   ApiEnvironmentEventsRoute: typeof ApiEnvironmentEventsRoute
   ApiLightingEventsRoute: typeof ApiLightingEventsRoute
 }
@@ -152,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiEnvironmentEventsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/car/events': {
+      id: '/api/car/events'
+      path: '/api/car/events'
+      fullPath: '/api/car/events'
+      preLoaderRoute: typeof ApiCarEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -160,6 +180,7 @@ const rootRouteChildren: RootRouteChildren = {
   HomeArchitectIndexRoute: HomeArchitectIndexRoute,
   MapIndexRoute: MapIndexRoute,
   SettingsIndexRoute: SettingsIndexRoute,
+  ApiCarEventsRoute: ApiCarEventsRoute,
   ApiEnvironmentEventsRoute: ApiEnvironmentEventsRoute,
   ApiLightingEventsRoute: ApiLightingEventsRoute,
 }

@@ -1,3 +1,4 @@
+import { getDomo } from "#/server/instance";
 import {
 	findAllSettings,
 	findSetting,
@@ -31,4 +32,5 @@ export async function findSettingByKey(key: string): Promise<Setting | null> {
 
 export async function saveSettings(settings: Setting[]): Promise<void> {
 	await upsertSettings(settings);
+	getDomo().car.carSettingChanged();
 }

@@ -39,7 +39,6 @@ function LightModifier({ lightBulb }: { lightBulb: DomoLightBulb }) {
 	});
 
 	const handleChange = (value: DomoLightParameters) => {
-		console.log("change", value);
 		if (!value.color || !value.brightness) return;
 
 		setCurrentColor(value);

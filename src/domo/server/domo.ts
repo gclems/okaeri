@@ -4,6 +4,7 @@ import type {
 	MessageBase,
 } from "home-assistant-js-websocket";
 
+import { CarService } from "#/server/car/car-service";
 import { EnvironmentService } from "#/server/environment/environment-service";
 import {
 	HomeAssistantClient,
@@ -24,6 +25,7 @@ export class Domo {
 	public readonly lighting: LightingService;
 	public readonly environment: EnvironmentService;
 	public readonly sun: SunService;
+	public readonly car: CarService;
 
 	private snapshot: DomoSnapshot = {
 		connectionState: "idle",
@@ -74,6 +76,7 @@ export class Domo {
 		this.lighting = new LightingService(this.homeAssistant, this.registry);
 		this.environment = new EnvironmentService(this.homeAssistant, this.registry);
 		this.sun = new SunService();
+		this.car = new CarService(this.homeAssistant, this.registry);
 	}
 
 	public async start(): Promise<void> {
@@ -140,6 +143,7 @@ export class Domo {
 	private handleHomeAssistantEntities(entities: HassEntities): void {
 		this.lighting.synchronize(entities);
 		this.environment.synchronize(entities);
+		this.car.synchronize(entities);
 
 		/*
 		 * Snapshot brut temporairement conservé pour les domaines

@@ -1,3 +1,5 @@
+import type { Setting } from "#/server/settings/settings-schemas";
+
 export interface Car {
 	name: string;
 
@@ -27,6 +29,7 @@ export interface Car {
 }
 
 export interface DomoCarSnapshot {
+	carSetting: Setting | null;
 	car: Car | null;
 	revision: number;
 }

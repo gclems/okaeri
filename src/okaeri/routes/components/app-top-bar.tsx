@@ -19,19 +19,6 @@ import { useEnvironmentSensors } from "@/features/environment/use-environment-se
 import { useLightBulbs } from "@/features/lighting/use-light-bulbs";
 
 function AppTopBar() {
-	// const carSettingQuery = useFindSettings("car_device_id");
-	// console.log({ carSetting: carSettingQuery.data?.value });
-
-	// const devicesQuery = useHomeAssistantDevices();
-	// // const entitiesQuery = useHomeAssistantEntities();
-
-	// if (devicesQuery.data && carSettingQuery.data) {
-	// 	const carDevice = devicesQuery.data.find(
-	// 		(device) => device.id === carSettingQuery.data?.value,
-	// 	);
-	// 	console.log({ carDevice });
-	// }
-
 	return (
 		<div className="flex items-center gap-x-4">
 			<Card className="flex-1" size="xs">
@@ -185,6 +172,8 @@ function Environment() {
 
 function Car() {
 	const car = useCar();
+
+	if (!car) return null;
 
 	return (
 		<div className="flex items-center gap-x-2">
