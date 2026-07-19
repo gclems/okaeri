@@ -39,10 +39,17 @@ export function mapCar(
 
 	const batteryEntityName = `sensor.${formattedDeviceName}_batterie`;
 	const batteryLifeEntityName = `sensor.${formattedDeviceName}_autonomie_de_la_batterie`;
+	const chargingEntityName = `sensor.${formattedDeviceName}_etat_de_charge`;
+	const remainingChargeTimeEntityName = `sensor.${formattedDeviceName}_temps_de_charge_restant`;
 	// ...
 	const mileageEntityName = `sensor.${formattedDeviceName}_kilometrage`;
 
+	// const carEntities = [];
 	for (const entity of Object.values(entities)) {
+		// if (entity.entity_id.includes(`${formattedDeviceName}`)) {
+		// 	carEntities.push(entity);
+		// }
+
 		if (entity.entity_id === batteryEntityName) {
 			car.batteryLevel = entity.state as unknown as number;
 		}
@@ -52,11 +59,20 @@ export function mapCar(
 		}
 
 		// ...
+		if (entity.entity_id === chargingEntityName) {
+			car.charging = entity.state === "charge_in_progress";
+		}
+
+		if (entity.entity_id === remainingChargeTimeEntityName) {
+			car.remainingChargeTime = +entity.state;
+		}
 
 		if (entity.entity_id === mileageEntityName) {
 			car.totalMileage = entity.state as unknown as number;
 		}
 	}
+
+	// console.log("carEntities", carEntities);
 
 	return car;
 }

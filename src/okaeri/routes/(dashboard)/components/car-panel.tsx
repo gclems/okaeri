@@ -1,13 +1,22 @@
-import { faBatteryHalf, faRoad } from "@fortawesome/free-solid-svg-icons";
+import {
+	faBatteryHalf,
+	faChargingStation,
+	faRoad,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Fieldset } from "shanty-ui";
 
+import { RollingNumber } from "@/components/rolling-number";
 import { useCar } from "@/features/car/use-car";
 
 function CarPanel() {
 	const car = useCar();
 
 	if (!car) return null;
+
+	const remainingChargeTime = car.remainingChargeTime ?? 0;
+	const hours = Math.floor(car.remainingChargeTime / 60);
+	const minutes = car.remainingChargeTime % 60;
 	return (
 		<Fieldset
 			legend={
@@ -17,14 +26,22 @@ function CarPanel() {
 				</div>
 			}
 		>
-			<div className="grid grid-cols-3 gap-2">
+			<div className="grid grid-cols-2 gap-2">
 				<div className="text-xl flex items-baseline gap-x-1">
 					<FontAwesomeIcon icon={faBatteryHalf} className="-rotate-90" />
-					<div className="">
-						<span className="text-metric">{car.batteryLevel}</span>
-						<span>%</span>
-						<span className="text-metric text-sm">{car.batteryLife}</span>
-						<span className="text-sm">Km</span>
+					<div className="flex items-baseline gap-x-2">
+						<div className="flex items-baseline">
+							<span className="text-metric">
+								<RollingNumber number={car.batteryLevel} />
+							</span>
+							<span>%</span>
+						</div>
+						<div className="flex items-baseline">
+							<span className="text-metric text-sm">
+								<RollingNumber number={car.batteryLife} />
+							</span>
+							<span className="text-sm">Km</span>
+						</div>
 					</div>
 				</div>
 
@@ -33,6 +50,18 @@ function CarPanel() {
 					<div className="text-metric">{car.totalMileage}</div>
 					<span className="text-sm">Km</span>
 				</div>
+
+				{car.charging && (
+					<div className="flex items-baseline gap-x-1">
+						<FontAwesomeIcon icon={faChargingStation} />
+						<div className="">
+							<span className="text-metric">
+								{String(hours).padStart(2, "0")}h{String(minutes).padStart(2, "0")}m
+							</span>
+							<span> restant</span>
+						</div>
+					</div>
+				)}
 			</div>
 		</Fieldset>
 	);
