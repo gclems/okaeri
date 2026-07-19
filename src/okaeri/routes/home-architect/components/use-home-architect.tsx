@@ -8,20 +8,20 @@ import {
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+import type {
+	HomeAssistantArea,
+	HomeAssistantDevice,
+} from "#/interfaces/home-assistant";
 import { persistRooms } from "#/server/architect/room-functions";
 import type { Room } from "#/shared/architect-types";
-import type {
-	HassAreaRegistryEntry,
-	HassDeviceRegistryEntry,
-} from "#/shared/hass-registry-types";
 import { roomsQueryOptions } from "@/features/architect/use-rooms";
 
 interface HomeArchitectContext {
 	selectedRoom: Room | null;
 	rooms: Record<string, Room>;
 
-	haAreas: HassAreaRegistryEntry[];
-	haDevices: HassDeviceRegistryEntry[];
+	haAreas: HomeAssistantArea[];
+	haDevices: HomeAssistantDevice[];
 
 	changed: boolean;
 
@@ -44,8 +44,8 @@ export function HomeArchitectProvider({
 	children,
 }: {
 	defaultRooms: Room[];
-	haAreas: HassAreaRegistryEntry[];
-	haDevices: HassDeviceRegistryEntry[];
+	haAreas: HomeAssistantArea[];
+	haDevices: HomeAssistantDevice[];
 	children: React.ReactNode;
 }) {
 	const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);

@@ -1,26 +1,15 @@
-import { create } from "zustand";
+import type { DomoLightingSnapshot } from "#/server/lighting/lighting-service";
+import { useDomoStore } from "@/features/domo-store";
 
-import type { DomoLightingSnapshot } from "#/shared/lighting-types";
+const emptySnapshot: DomoLightingSnapshot = {
+	revision: 0,
+	lights: {},
+	lightGroups: {},
+};
 
-type ConnectionState = "idle" | "connecting" | "connected" | "error";
-
-interface LightingState {
-	snapshot: DomoLightingSnapshot | null;
-	connectionState: ConnectionState;
-
-	setSnapshot: (snapshot: DomoLightingSnapshot) => void;
-	setConnectionState: (state: ConnectionState) => void;
-}
-
-export const useLightingStore = create<LightingState>((set) => ({
-	snapshot: null,
-	connectionState: "idle",
-
-	setSnapshot: (snapshot) => {
-		set({ snapshot });
-	},
-
-	setConnectionState: (connectionState) => {
-		set({ connectionState });
-	},
-}));
+export const useLightingStore = () =>
+	useDomoStore(
+		(state) =>
+			(state.snapshots.lighting as DomoLightingSnapshot | undefined) ??
+			emptySnapshot,
+	);

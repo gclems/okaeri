@@ -1,13 +1,14 @@
 import type { HassEntities } from "home-assistant-js-websocket";
 
-import type { HomeAssistantClient } from "#/server/home-assistant-client";
-import type { RegistryService } from "#/server/registry/registry-service";
 import type {
 	DomoLightBulb,
 	DomoLightGroup,
-	DomoLightingSnapshot,
-	RgbColor,
-} from "#/shared/lighting-types";
+	DomoRgbColor,
+} from "#/interfaces/lighting";
+import type { DomoServiceSnapshot } from "#/server/domo-service-snapshot";
+import type { HomeAssistantClient } from "#/server/home-assistant-client";
+import type { HomeAssistantRegistryService } from "#/server/home-assistant-registry/home-assistant-registry-service";
+import { HomeAssistantService } from "#/server/home-assistant-service";
 
 import {
 	isHomeAssistantLight,
@@ -16,55 +17,26 @@ import {
 	mapHomeAssistantLightGroup,
 } from "./lighting-mapper";
 
-export type LightingListener = (snapshot: DomoLightingSnapshot) => void;
-
 export interface TurnOnLightOptions {
 	brightness?: number;
-	color?: RgbColor;
+	color?: DomoRgbColor;
 	colorTemperature?: number;
 }
 
-export class LightingService {
-	private snapshot: DomoLightingSnapshot = {
-		lights: {},
-		lightGroups: {},
-		revision: 0,
-	};
+export type DomoLightingSnapshot = DomoServiceSnapshot & {
+	lights: Record<string, DomoLightBulb>;
+	lightGroups: Record<string, DomoLightGroup>;
+};
 
-	private readonly listeners = new Set<LightingListener>();
-
+export class LightingService extends HomeAssistantService<DomoLightingSnapshot> {
 	public constructor(
-		private readonly homeAssistant: HomeAssistantClient,
-		private readonly registry: RegistryService,
-	) {}
-
-	public getSnapshot(): DomoLightingSnapshot {
-		return this.snapshot;
+		homeAssistant: HomeAssistantClient,
+		registry: HomeAssistantRegistryService,
+	) {
+		super("lighting", homeAssistant, registry);
 	}
 
-	public getAll(): readonly DomoLightBulb[] {
-		return Object.values(this.snapshot.lights);
-	}
-
-	public get(id: string): DomoLightBulb | null {
-		return this.snapshot.lights[id] ?? null;
-	}
-
-	public subscribe(listener: LightingListener): () => void {
-		this.listeners.add(listener);
-
-		return () => {
-			this.listeners.delete(listener);
-		};
-	}
-
-	/**
-	 * Synchronise le silo depuis l’état complet fourni par HA.
-	 *
-	 * subscribeEntities fournit un dictionnaire complet actualisé,
-	 * donc on reconstruit ici le snapshot Lighting.
-	 */
-	public synchronize(entities: HassEntities): void {
+	public synchronize(entities: HassEntities): boolean {
 		const lights: Record<string, DomoLightBulb> = {};
 		const lightGroups: Record<string, DomoLightGroup> = {};
 
@@ -73,18 +45,13 @@ export class LightingService {
 				continue;
 			}
 
-			const registryEntity = this.registry.resolveEntity(entity.entity_id);
+			const registryEntity = this.registry.resolveEntityRegistry(entity.entity_id);
 
 			if (isHomeAssistantLightGroup(entity)) {
 				const group = mapHomeAssistantLightGroup(entity, registryEntity);
-
 				lightGroups[group.id] = group;
-				continue;
-			}
-
-			if (isHomeAssistantLight(entity)) {
+			} else if (isHomeAssistantLight(entity)) {
 				const light = mapHomeAssistantLight(entity, registryEntity);
-
 				lights[light.id] = light;
 			}
 		}
@@ -97,7 +64,7 @@ export class LightingService {
 		);
 
 		if (lightsAreEqual && lightGroupsAreEqual) {
-			return;
+			return false;
 		}
 
 		this.snapshot = {
@@ -106,7 +73,7 @@ export class LightingService {
 			revision: this.snapshot.revision + 1,
 		};
 
-		this.emit();
+		return true;
 	}
 
 	public async turnOn(
@@ -164,13 +131,13 @@ export class LightingService {
 		await this.turnOn(id, { brightness });
 	}
 
-	public async setColor(id: string, color: RgbColor): Promise<void> {
+	public async setColor(id: string, color: DomoRgbColor): Promise<void> {
 		await this.turnOn(id, { color });
 	}
 
 	public async setColorAndBrightness(
 		id: string,
-		color: RgbColor,
+		color: DomoRgbColor,
 		brightness: number,
 	): Promise<void> {
 		await this.turnOn(id, { color, brightness });
@@ -188,14 +155,8 @@ export class LightingService {
 		}
 	}
 
-	private emit(): void {
-		for (const listener of this.listeners) {
-			listener(this.snapshot);
-		}
-	}
-
 	private shouldBeTurnedOff(
-		color?: RgbColor | null,
+		color?: DomoRgbColor | null,
 		brightness?: number | null,
 	): boolean {
 		if (!color && !brightness) {
@@ -213,18 +174,11 @@ export class LightingService {
 		return false;
 	}
 
-	private areEntitiesEqual<
-		T extends {
-			lastUpdated: string | null;
-			name: string;
-			area_id: string | null;
-			device_id: string | null;
-		},
-	>(
-		previous: Readonly<Record<string, T>>,
-		next: Readonly<Record<string, T>>,
+	private areEntitiesEqual<T extends DomoLightBulb>(
+		previous: Record<string, T>,
+		next: Record<string, T>,
 	): boolean {
-		const previousIds = Object.keys(previous);
+		const previousIds = Object.keys(previous ?? {});
 		const nextIds = Object.keys(next);
 
 		if (previousIds.length !== nextIds.length) {
@@ -235,12 +189,24 @@ export class LightingService {
 			const previousEntity = previous[id];
 			const nextEntity = next[id];
 
+			if (!previousEntity || !nextEntity) {
+				return false;
+			}
+
 			return (
 				previousEntity !== undefined &&
 				previousEntity.lastUpdated === nextEntity.lastUpdated &&
 				previousEntity.name === nextEntity.name &&
-				previousEntity.area_id === nextEntity.area_id &&
-				previousEntity.device_id === nextEntity.device_id
+				previousEntity.areaId === nextEntity.areaId &&
+				previousEntity.deviceId === nextEntity.deviceId &&
+				previousEntity.isOn === nextEntity.isOn &&
+				previousEntity.brightness === nextEntity.brightness &&
+				((previousEntity.color === null && nextEntity.color === null) ||
+					(previousEntity.color !== null &&
+						nextEntity.color !== null &&
+						previousEntity.color.red === nextEntity.color.red &&
+						previousEntity.color.green === nextEntity.color.green &&
+						previousEntity.color.blue === nextEntity.color.blue))
 			);
 		});
 	}

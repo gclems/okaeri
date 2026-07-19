@@ -1,26 +1,14 @@
-import { create } from "zustand";
-
 import type { DomoEnvironmentSnapshot } from "#/shared/environment-types";
+import { useDomoStore } from "@/features/domo-store";
 
-type ConnectionState = "idle" | "connecting" | "connected" | "error";
+const emptySnapshot: DomoEnvironmentSnapshot = {
+	sensors: {},
+	revision: 0,
+};
 
-interface EnvironmentState {
-	snapshot: DomoEnvironmentSnapshot | null;
-	connectionState: ConnectionState;
-
-	setSnapshot: (snapshot: DomoEnvironmentSnapshot) => void;
-	setConnectionState: (state: ConnectionState) => void;
-}
-
-export const useEnvironmentStore = create<EnvironmentState>((set) => ({
-	snapshot: null,
-	connectionState: "idle",
-
-	setSnapshot: (snapshot) => {
-		set({ snapshot });
-	},
-
-	setConnectionState: (connectionState) => {
-		set({ connectionState });
-	},
-}));
+export const useEnvironmentStore = () =>
+	useDomoStore(
+		(state) =>
+			(state.snapshots.environment as DomoEnvironmentSnapshot | undefined) ??
+			emptySnapshot,
+	);

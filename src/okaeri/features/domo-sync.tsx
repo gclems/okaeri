@@ -1,36 +1,30 @@
 import { useEffect } from "react";
 
-import type { DomoCarSnapshot } from "#/shared/car-types";
-import type { DomoEnvironmentSnapshot } from "#/shared/environment-types";
-import type { DomoLightingSnapshot } from "#/shared/lighting-types";
-import { useCarStore } from "@/features/car/car.store";
-import { useEnvironmentStore } from "@/features/environment/environment.store";
-import { useLightingStore } from "@/features/lighting/lighting.store";
+import type { DomoServiceSnapshot } from "#/server/domo-service-snapshot";
+import { useDomoStore } from "@/features/domo-store";
 
 export function useDomoSync() {
-	useLightingSync();
-	useEnvironmentSync();
-	useCarSync();
-}
-
-function useLightingSync() {
 	useEffect(() => {
-		useLightingStore.getState().setConnectionState("connecting");
+		useDomoStore.getState().setConnectionState("connecting");
 
-		const eventSource = new EventSource("/api/lighting/events");
+		const eventSource = new EventSource("/api/events");
 
 		eventSource.onopen = () => {
-			useLightingStore.getState().setConnectionState("connected");
+			useDomoStore.getState().setConnectionState("connected");
 		};
 
 		eventSource.onmessage = (event) => {
-			const snapshot = JSON.parse(event.data) as DomoLightingSnapshot;
+			const { snapshots } = JSON.parse(event.data) as {
+				snapshots: Record<string, DomoServiceSnapshot>;
+			};
 
-			useLightingStore.getState().setSnapshot(snapshot);
+			for (const [type, snapshot] of Object.entries(snapshots)) {
+				useDomoStore.getState().setSnapshot(type, snapshot);
+			}
 		};
 
 		eventSource.onerror = () => {
-			useLightingStore.getState().setConnectionState("error");
+			useDomoStore.getState().setConnectionState("error");
 		};
 
 		return () => {
@@ -39,54 +33,80 @@ function useLightingSync() {
 	}, []);
 }
 
-function useEnvironmentSync() {
-	useEffect(() => {
-		useEnvironmentStore.getState().setConnectionState("connecting");
+// function useLightingSync() {
+// 	useEffect(() => {
+// 		useLightingStore.getState().setConnectionState("connecting");
 
-		const eventSource = new EventSource("/api/environment/events");
+// 		const eventSource = new EventSource("/api/lighting/events");
 
-		eventSource.onopen = () => {
-			useEnvironmentStore.getState().setConnectionState("connected");
-		};
+// 		eventSource.onopen = () => {
+// 			useLightingStore.getState().setConnectionState("connected");
+// 		};
 
-		eventSource.onmessage = (event) => {
-			const snapshot = JSON.parse(event.data) as DomoEnvironmentSnapshot;
+// 		eventSource.onmessage = (event) => {
+// 			const snapshot = JSON.parse(event.data) as DomoLightingSnapshot;
 
-			useEnvironmentStore.getState().setSnapshot(snapshot);
-		};
+// 			useLightingStore.getState().setSnapshot(snapshot);
+// 		};
 
-		eventSource.onerror = () => {
-			useEnvironmentStore.getState().setConnectionState("error");
-		};
+// 		eventSource.onerror = () => {
+// 			useLightingStore.getState().setConnectionState("error");
+// 		};
 
-		return () => {
-			eventSource.close();
-		};
-	}, []);
-}
+// 		return () => {
+// 			eventSource.close();
+// 		};
+// 	}, []);
+// }
 
-function useCarSync() {
-	useEffect(() => {
-		useCarStore.getState().setConnectionState("connecting");
+// function useEnvironmentSync() {
+// 	useEffect(() => {
+// 		useEnvironmentStore.getState().setConnectionState("connecting");
 
-		const eventSource = new EventSource("/api/car/events");
+// 		const eventSource = new EventSource("/api/environment/events");
 
-		eventSource.onopen = () => {
-			useCarStore.getState().setConnectionState("connected");
-		};
+// 		eventSource.onopen = () => {
+// 			useEnvironmentStore.getState().setConnectionState("connected");
+// 		};
 
-		eventSource.onmessage = (event) => {
-			const snapshot = JSON.parse(event.data) as DomoCarSnapshot;
+// 		eventSource.onmessage = (event) => {
+// 			const snapshot = JSON.parse(event.data) as DomoEnvironmentSnapshot;
 
-			useCarStore.getState().setSnapshot(snapshot);
-		};
+// 			useEnvironmentStore.getState().setSnapshot(snapshot);
+// 		};
 
-		eventSource.onerror = () => {
-			useCarStore.getState().setConnectionState("error");
-		};
+// 		eventSource.onerror = () => {
+// 			useEnvironmentStore.getState().setConnectionState("error");
+// 		};
 
-		return () => {
-			eventSource.close();
-		};
-	}, []);
-}
+// 		return () => {
+// 			eventSource.close();
+// 		};
+// 	}, []);
+// }
+
+// function useCarSync() {
+// 	useEffect(() => {
+// 		useCarStore.getState().setConnectionState("connecting");
+
+// 		const eventSource = new EventSource("/api/car/events");
+
+// 		eventSource.onopen = () => {
+// 			useCarStore.getState().setConnectionState("connected");
+// 		};
+
+// 		eventSource.onmessage = (event) => {
+// 			const snapshot = JSON.parse(event.data) as DomoCarSnapshot;
+
+// 			useCarStore.getState().setSnapshot(snapshot);
+// 		};
+
+// 		eventSource.onerror = () => {
+// 			useCarStore.getState().setConnectionState("error");
+// 		};
+
+// 		return () => {
+// 			eventSource.close();
+// 		};
+// 	}, []);
+// }

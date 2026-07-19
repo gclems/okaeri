@@ -2,25 +2,20 @@ import type { HassEntities } from "home-assistant-js-websocket";
 
 import { mapCar } from "#/server/car/car-mapper";
 import type { HomeAssistantClient } from "#/server/home-assistant-client";
-import type { RegistryService } from "#/server/registry/registry-service";
+import type { HomeAssistantRegistryService } from "#/server/home-assistant-registry/home-assistant-registry-service";
+import { HomeAssistantService } from "#/server/home-assistant-service";
 import { findSettingByKey } from "#/server/settings/settings-service";
 import type { Car, DomoCarSnapshot } from "#/shared/car-types";
 
 export type CarListener = (snapshot: DomoCarSnapshot) => void;
 
-export class CarService {
-	private snapshot: DomoCarSnapshot = {
-		carSetting: null,
-		car: null,
-		revision: 0,
-	};
-
-	private readonly listeners = new Set<CarListener>();
-
+export class CarService extends HomeAssistantService<DomoCarSnapshot> {
 	public constructor(
-		private readonly homeAssistant: HomeAssistantClient,
-		private readonly registry: RegistryService,
-	) {}
+		homeAssistant: HomeAssistantClient,
+		registry: HomeAssistantRegistryService,
+	) {
+		super("car", homeAssistant, registry);
+	}
 
 	public getSnapshot(): DomoCarSnapshot {
 		return this.snapshot;
@@ -30,30 +25,22 @@ export class CarService {
 		return this.snapshot.car;
 	}
 
-	public subscribe(listener: CarListener): () => void {
-		this.listeners.add(listener);
-
-		return () => {
-			this.listeners.delete(listener);
-		};
-	}
-
 	public carSettingChanged(): void {
 		this.snapshot.carSetting = null;
 	}
 
-	public async synchronize(entities: HassEntities): Promise<void> {
+	public async synchronize(entities: HassEntities): Promise<boolean> {
 		const carSetting =
 			this.snapshot?.carSetting ?? (await findSettingByKey("car_device_id"));
 
 		if (!carSetting || !carSetting.value) {
-			return;
+			return false;
 		}
 
-		const device = this.registry.getDevices().get(carSetting.value);
+		const device = this.registry.devices.get(carSetting.value);
 
 		if (!device) {
-			return;
+			return false;
 		}
 
 		// create car object
@@ -65,16 +52,12 @@ export class CarService {
 			revision: this.snapshot.revision + 1,
 		};
 
-		if (!this.areSnapshotsEqual(this.snapshot, newSnapshot)) {
-			this.snapshot = newSnapshot;
-			this.emit();
+		if (this.areSnapshotsEqual(this.snapshot, newSnapshot)) {
+			return false;
 		}
-	}
 
-	private emit(): void {
-		for (const listener of this.listeners) {
-			listener(this.snapshot);
-		}
+		this.snapshot = newSnapshot;
+		return true;
 	}
 
 	private areSnapshotsEqual(a: DomoCarSnapshot, b: DomoCarSnapshot): boolean {

@@ -1,3 +1,5 @@
+import { faHouseCrack } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "@tanstack/react-router";
 import { CogIcon, HomeIcon, LandmarkIcon, MapIcon } from "lucide-react";
 import { Separator, Sidebar, Tooltip, cn, useSidebar } from "shanty-ui";
@@ -49,6 +51,12 @@ function AppSidebar() {
 					<Sidebar.Item render={<Link to="/home-architect" />}>
 						<LandmarkIcon />
 						Architecte
+					</Sidebar.Item>
+				</Tooltip>
+
+				<Tooltip content="Architecte">
+					<Sidebar.Item render={<Link to="/home-assistant-observer" />}>
+						<FontAwesomeIcon icon={faHouseCrack} /> Home Assistant Observer
 					</Sidebar.Item>
 				</Tooltip>
 			</Sidebar.Content>

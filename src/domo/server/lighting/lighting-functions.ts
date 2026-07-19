@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
+import type { LightingService } from "#/server/lighting/lighting-service";
+
 import { getDomo } from "../instance";
 
 const lightIdSchema = z.string().startsWith("light.");
@@ -36,16 +38,6 @@ const setColorAndBrightnessSchema = z.object({
 	brightness: z.number().min(0).max(1),
 });
 
-export const getLightingSnapshot = createServerFn({
-	method: "GET",
-}).handler(async () => {
-	const domo = getDomo();
-
-	await domo.whenReady();
-
-	return domo.lighting.getSnapshot();
-});
-
 export const turnOnLight = createServerFn({
 	method: "POST",
 })
@@ -53,8 +45,10 @@ export const turnOnLight = createServerFn({
 	.handler(async ({ data }) => {
 		const domo = getDomo();
 
-		await domo.whenReady();
-		await domo.lighting.turnOn(data.entityId);
+		await domo.start();
+		await (domo.homeAssistantService("lighting") as LightingService)?.turnOn(
+			data.entityId,
+		);
 
 		return {
 			success: true,
@@ -68,8 +62,10 @@ export const turnOffLight = createServerFn({
 	.handler(async ({ data }) => {
 		const domo = getDomo();
 
-		await domo.whenReady();
-		await domo.lighting.turnOff(data.entityId);
+		await domo.start();
+		await (domo.homeAssistantService("lighting") as LightingService)?.turnOff(
+			data.entityId,
+		);
 
 		return {
 			success: true,
@@ -83,8 +79,10 @@ export const toggleLight = createServerFn({
 	.handler(async ({ data }) => {
 		const domo = getDomo();
 
-		await domo.whenReady();
-		await domo.lighting.toggle(data.entityId);
+		await domo.start();
+		await (domo.homeAssistantService("lighting") as LightingService)?.toggle(
+			data.entityId,
+		);
 
 		return {
 			success: true,
@@ -98,9 +96,11 @@ export const setLightBrightness = createServerFn({
 	.handler(async ({ data }) => {
 		const domo = getDomo();
 
-		await domo.whenReady();
+		await domo.start();
 
-		await domo.lighting.setBrightness(data.entityId, data.brightness);
+		await (
+			domo.homeAssistantService("lighting") as LightingService
+		).setBrightness(data.entityId, data.brightness);
 
 		return {
 			success: true,
@@ -114,13 +114,11 @@ export const setLightColorAndBrightness = createServerFn({
 	.handler(async ({ data }) => {
 		const domo = getDomo();
 
-		await domo.whenReady();
+		await domo.start();
 
-		await domo.lighting.setColorAndBrightness(
-			data.entityId,
-			data.color,
-			data.brightness,
-		);
+		await (
+			domo.homeAssistantService("lighting") as LightingService
+		).setColorAndBrightness(data.entityId, data.color, data.brightness);
 
 		return {
 			success: true,
@@ -134,9 +132,12 @@ export const setLightColor = createServerFn({
 	.handler(async ({ data }) => {
 		const domo = getDomo();
 
-		await domo.whenReady();
+		await domo.start();
 
-		await domo.lighting.setColor(data.entityId, data.color);
+		await (domo.homeAssistantService("lighting") as LightingService).setColor(
+			data.entityId,
+			data.color,
+		);
 
 		return {
 			success: true,

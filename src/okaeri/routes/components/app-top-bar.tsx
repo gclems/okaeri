@@ -78,7 +78,7 @@ function DateTime() {
 function Lights() {
 	const lights = useLightBulbs();
 
-	const on = lights.filter((light) => light.state === "on").length;
+	const on = lights.filter((light) => light.isOn).length;
 	return (
 		<div className="">
 			<span className={cn({ "text-energy": on > 0 })}>
@@ -91,7 +91,7 @@ function Lights() {
 
 function Environment() {
 	const roomsQuery = useRooms();
-	const environmentDevices = useEnvironmentSensors();
+	const environmentDevices = Object.values(useEnvironmentSensors());
 
 	return (
 		<QueryLoader queries={[roomsQuery]}>
@@ -103,6 +103,10 @@ function Environment() {
 				let hygrometersCount = 0;
 				let barometersCount = 0;
 
+				let temperatureUnit: string | undefined;
+				let humidityUnit: string | undefined;
+				let pressureUnit: string | undefined;
+
 				rooms.forEach((room) => {
 					if (room.haEnvironmentSensorDeviceId) {
 						const device = environmentDevices.find(
@@ -112,16 +116,19 @@ function Environment() {
 						if (device?.thermometer && !!device.thermometer.value) {
 							accumulatedTemperature += device.thermometer.value;
 							thermometersCount++;
+							temperatureUnit = device.thermometer.unitOfMeasurement;
 						}
 
 						if (device?.hygrometer && !!device.hygrometer.value) {
 							accumulatedHumidity += device.hygrometer.value;
 							hygrometersCount++;
+							humidityUnit = device.hygrometer.unitOfMeasurement;
 						}
 
 						if (device?.barometer && !!device.barometer.value) {
 							accumulatedPressure += device.barometer.value;
 							barometersCount++;
+							pressureUnit = device.barometer.unitOfMeasurement;
 						}
 					}
 				});
@@ -138,6 +145,7 @@ function Environment() {
 									formatter={(value) => value.toFixed(1)}
 								/>
 							</span>
+							<span className="text-muted-foreground text-sm">{temperatureUnit}</span>
 						</div>
 						<div className="text-xs">
 							<div className="flex items-center gap-x-1">
@@ -150,17 +158,16 @@ function Environment() {
 										formatter={(value) => value.toFixed(1)}
 									/>
 								</span>
+								<span className="text-muted-foreground text-sm">{humidityUnit}</span>
 							</div>
 							<div className="flex items-center gap-x-1">
 								<span className="text-network">
 									<FontAwesomeIcon icon={faTachometerAlt} />
 								</span>
 								<span className="text-metric text-xs">
-									<RollingNumber
-										number={accumulatedPressure / barometersCount}
-										formatter={(value) => value.toFixed(1)}
-									/>
+									<RollingNumber number={accumulatedPressure / barometersCount} />
 								</span>
+								<span className="text-muted-foreground text-sm">{pressureUnit}</span>
 							</div>
 						</div>
 					</div>

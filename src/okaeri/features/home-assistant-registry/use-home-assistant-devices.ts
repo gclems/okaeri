@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getHomeAssistantDevices } from "#/server/registry/registry-functions";
+import { getHomeAssistantDevices } from "#/server/home-assistant-registry/home-assistant-registry-functions";
 
 export const homeAssistantDevicesQueryOptions = {
 	queryKey: ["home-assistant-devices"],

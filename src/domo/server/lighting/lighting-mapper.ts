@@ -1,19 +1,11 @@
 import type { HassEntity } from "home-assistant-js-websocket";
 
-import type { ResolvedEntityRegistry } from "#/server/registry/registry-service";
-
 import type {
 	DomoLightBulb,
 	DomoLightGroup,
-	LightState,
-	RgbColor,
-} from "../../shared/lighting-types";
-
-function getStringAttribute(entity: HassEntity, name: string): string | null {
-	const value = entity.attributes[name];
-
-	return typeof value === "string" ? value : null;
-}
+	DomoRgbColor,
+} from "#/interfaces/lighting";
+import type { ResolvedEntityRegistry } from "#/server/home-assistant-registry/home-assistant-registry-service";
 
 function getNumberAttribute(entity: HassEntity, name: string): number | null {
 	const value = entity.attributes[name];
@@ -21,7 +13,7 @@ function getNumberAttribute(entity: HassEntity, name: string): number | null {
 	return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 
-function getRgbColor(entity: HassEntity): RgbColor | null {
+function getRgbColor(entity: HassEntity): DomoRgbColor | null {
 	const value = entity.attributes.rgb_color;
 
 	if (
@@ -41,28 +33,6 @@ function getRgbColor(entity: HassEntity): RgbColor | null {
 	};
 }
 
-function mapName(entity: HassEntity, registry: ResolvedEntityRegistry): string {
-	return (
-		registry.entity?.name ??
-		getStringAttribute(entity, "friendly_name") ??
-		registry.entity?.original_name ??
-		entity.entity_id
-	);
-}
-
-function mapLightState(state: string): LightState {
-	switch (state) {
-		case "on":
-		case "off":
-		case "unavailable":
-		case "unknown":
-			return state;
-
-		default:
-			return "unknown";
-	}
-}
-
 function mapBrightness(entity: HassEntity): number | null {
 	const brightness = getNumberAttribute(entity, "brightness");
 
@@ -77,7 +47,7 @@ function isLightDomain(entity: HassEntity): boolean {
 	return entity.entity_id.startsWith("light.");
 }
 
-function getLightIds(entity: HassEntity): string[] {
+function getLightsNames(entity: HassEntity): string[] {
 	const value = Array.isArray(entity.attributes.entity_id)
 		? entity.attributes.entity_id
 		: entity.attributes.lights;
@@ -93,67 +63,57 @@ function getLightIds(entity: HassEntity): string[] {
 }
 
 export function isHomeAssistantLight(entity: HassEntity): boolean {
-	return isLightDomain(entity) && getLightIds(entity).length === 0;
+	return isLightDomain(entity) && getLightsNames(entity).length === 0;
 }
 
 export function isHomeAssistantLightGroup(entity: HassEntity): boolean {
-	return isLightDomain(entity) && getLightIds(entity).length > 0;
+	return isLightDomain(entity) && getLightsNames(entity).length > 0;
 }
 
 export function mapHomeAssistantLight(
 	entity: HassEntity,
-	registry: ResolvedEntityRegistry,
+	registryEntity: ResolvedEntityRegistry,
 ): DomoLightBulb {
-	if (!isHomeAssistantLight(entity)) {
+	if (!isHomeAssistantLight(entity) || !registryEntity.entity) {
 		throw new Error(`Cannot map "${entity.entity_id}" as a light`);
 	}
 
 	return {
-		id: entity.entity_id,
-		domain: "light",
-		type: "bulb",
+		id: registryEntity.entity.id,
+		name: registryEntity.entity.name,
+		areaId: registryEntity.area?.id ?? null,
+		deviceId: registryEntity.device?.id ?? null,
+		lastStateUpdated: new Date(entity.last_changed),
+		lastUpdated: new Date(registryEntity.entity.modifiedAt),
 
-		name: mapName(entity, registry),
-
-		area_id: registry.area?.area_id ?? null,
-		device_id: registry.device?.id ?? null,
-
-		state: mapLightState(entity.state),
-
+		isOn: entity.state === "on",
 		brightness: mapBrightness(entity),
 		color: getRgbColor(entity),
-
-		lastChanged: entity.last_changed,
-		lastUpdated: entity.last_updated,
 	};
 }
 
 export function mapHomeAssistantLightGroup(
 	entity: HassEntity,
-	registry: ResolvedEntityRegistry,
+	registryEntity: ResolvedEntityRegistry,
 ): DomoLightGroup {
-	if (!isHomeAssistantLightGroup(entity)) {
+	if (!isHomeAssistantLightGroup(entity) || !registryEntity.entity) {
 		throw new Error(`Cannot map "${entity.entity_id}" as a light group`);
 	}
 
 	return {
 		id: entity.entity_id,
-		domain: "light",
-		type: "group",
 
-		name: mapName(entity, registry),
+		name: registryEntity.entity.name,
 
-		area_id: registry.area?.area_id ?? null,
-		device_id: registry.device?.id ?? null,
+		areaId: registryEntity.area?.id ?? null,
+		deviceId: registryEntity.device?.id ?? null,
+		lastStateUpdated: new Date(entity.last_changed),
+		lastUpdated: new Date(registryEntity.entity.modifiedAt),
 
-		state: mapLightState(entity.state),
-
+		isOn: entity.state === "on",
 		brightness: mapBrightness(entity),
 		color: getRgbColor(entity),
 
-		lastChanged: entity.last_changed,
-		lastUpdated: entity.last_updated,
-
-		lightIds: getLightIds(entity),
+		lightNames: getLightsNames(entity),
 	};
 }

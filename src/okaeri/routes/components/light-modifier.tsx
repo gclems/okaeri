@@ -3,14 +3,11 @@ import { useState } from "react";
 import { type RgbaColor, RgbaColorPicker } from "react-colorful";
 import { Switch } from "shanty-ui";
 
+import type { DomoLightBulb, DomoRgbColor } from "#/interfaces/lighting";
 import {
 	setLightColorAndBrightness,
 	toggleLight,
 } from "#/server/lighting/lighting-functions";
-import type {
-	DomoLightBulb,
-	RgbColor as DomoRgbColor,
-} from "#/shared/lighting-types";
 
 type DomoLightParameters = {
 	color: DomoRgbColor | null;
@@ -45,7 +42,7 @@ function LightModifier({ lightBulb }: { lightBulb: DomoLightBulb }) {
 
 		setLightColorAndBrightness({
 			data: {
-				entityId: lightBulb.id,
+				entityId: lightBulb.name,
 				color: value.color,
 				brightness: value.brightness,
 			},
@@ -53,7 +50,7 @@ function LightModifier({ lightBulb }: { lightBulb: DomoLightBulb }) {
 	};
 
 	const handleSwitchChange = () => {
-		toggleLight({ data: { entityId: lightBulb.id } });
+		toggleLight({ data: { entityId: lightBulb.name } });
 	};
 
 	return (
@@ -61,8 +58,8 @@ function LightModifier({ lightBulb }: { lightBulb: DomoLightBulb }) {
 			<div className="flex items-center justify-between gap-x-8">
 				<div className="text-heading flex-1 truncate">{lightBulb.name}</div>
 				<Switch
-					color={lightBulb.state === "on" ? "warning" : "neutral"}
-					checked={lightBulb.state === "on"}
+					color={lightBulb.isOn ? "warning" : "neutral"}
+					checked={lightBulb.isOn}
 					onCheckedChange={() => handleSwitchChange()}
 				/>
 			</div>

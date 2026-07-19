@@ -1,15 +1,14 @@
 import type { HassEntities } from "home-assistant-js-websocket";
 
-import type { RegistryService } from "#/server/registry/registry-service";
+import type { HomeAssistantRegistryService } from "#/server/home-assistant-registry/home-assistant-registry-service";
 import type { Car } from "#/shared/car-types";
-import type { HassDeviceRegistryEntry } from "#/shared/hass-registry-types";
 
 export function mapCar(
 	carDeviceId: string,
-	registry: RegistryService,
+	registry: HomeAssistantRegistryService,
 	entities: HassEntities,
 ): Car | null {
-	const device = registry.getDevices().get(carDeviceId);
+	const device = registry.devices.get(carDeviceId);
 
 	if (!device) {
 		return null;
@@ -17,7 +16,7 @@ export function mapCar(
 
 	// create car object
 	const car: Car = {
-		name: getDeviceName(device),
+		name: device.name,
 		device_id: device.id,
 		batteryLevel: 0,
 		batteryLife: 0,
@@ -36,9 +35,7 @@ export function mapCar(
 		exteriorTemperature: 0,
 	};
 
-	const formattedDeviceName = getDeviceName(device)
-		.replace(/\s+/g, "_")
-		.toLowerCase();
+	const formattedDeviceName = device.name.replace(/\s+/g, "_").toLowerCase();
 
 	const batteryEntityName = `sensor.${formattedDeviceName}_batterie`;
 	const batteryLifeEntityName = `sensor.${formattedDeviceName}_autonomie_de_la_batterie`;
@@ -63,7 +60,3 @@ export function mapCar(
 
 	return car;
 }
-
-const getDeviceName = (device: HassDeviceRegistryEntry): string => {
-	return device.name_by_user ?? device.name ?? device.id;
-};

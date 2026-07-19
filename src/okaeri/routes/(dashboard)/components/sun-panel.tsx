@@ -1,7 +1,7 @@
 import { SunIcon, SunriseIcon, SunsetIcon } from "lucide-react";
 import { Card } from "shanty-ui";
 
-import type { Sun } from "#/shared/sun-types";
+import type { DomoSun } from "#/interfaces/sun";
 import { QueryLoader } from "@/components/query-loader";
 import { SunPhaseIcon } from "@/components/sun-phase-icon";
 import { useSun } from "@/features/sun/use-sun";
@@ -24,18 +24,15 @@ function SunPanel() {
 	);
 }
 
-function SunPanelContent({ sun }: { sun: Sun }) {
+function SunPanelContent({ sun }: { sun: DomoSun }) {
 	return (
 		<div className="grid grid-cols-4 items-center justify-center">
-			<div className="text-energy place-self-center row-span-2">
+			<div className="text-energy place-self-center row-span-full">
 				<SunPhaseIcon size="3rem" />
 			</div>
-			<SunValue icon={<SunriseIcon />} value={sun?.sunrise_at.toISOString()} />
-			<SunValue icon={<SunIcon />} value={sun?.solarnoon_at.toISOString()} />
-			<SunValue icon={<SunsetIcon />} value={sun?.sunset_at.toISOString()} />
-			<SunTomorrowValue value={sun?.tomorrow?.sunrise_at.toISOString()} />
-			<SunTomorrowValue value={sun?.tomorrow?.solarnoon_at.toISOString()} />
-			<SunTomorrowValue value={sun?.tomorrow?.sunset_at.toISOString()} />
+			<SunValue icon={<SunriseIcon />} value={sun.sunriseAt.toISOString()} />
+			<SunValue icon={<SunIcon />} value={sun.solarnoonAt.toISOString()} />
+			<SunValue icon={<SunsetIcon />} value={sun.sunsetAt.toISOString()} />
 		</div>
 	);
 }
@@ -47,22 +44,6 @@ function SunValue({ icon, value }: { icon?: React.ReactNode; value?: string }) {
 			{!value && <span className="text-muted-foreground">--</span>}
 			{value && (
 				<span className="text-metric text-sm">
-					{new Date(value).toLocaleTimeString([], {
-						hour: "2-digit",
-						minute: "2-digit",
-					})}
-				</span>
-			)}
-		</div>
-	);
-}
-
-function SunTomorrowValue({ value }: { value?: string }) {
-	return (
-		<div className="flex flex-col items-center text-muted-foreground">
-			{!value && <span>--</span>}
-			{value && (
-				<span className="text-metric text-xs">
 					{new Date(value).toLocaleTimeString([], {
 						hour: "2-digit",
 						minute: "2-digit",

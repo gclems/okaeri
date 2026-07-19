@@ -8,7 +8,7 @@ export const Route = createFileRoute("/api/car/events")({
 			GET: async ({ request }) => {
 				const domo = getDomo();
 
-				await domo.whenReady();
+				await domo.start();
 
 				const encoder = new TextEncoder();
 				let cleanup = () => {};

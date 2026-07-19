@@ -6,8 +6,11 @@ import { roomsQueryOptions, useRooms } from "@/features/architect/use-rooms";
 import {
 	homeAssistantAreasQueryOptions,
 	useHomeAssistantAreas,
-} from "@/features/registry/use-home-assistant-areas";
-import { useHomeAssistantDevices } from "@/features/registry/use-home-assistant-devices";
+} from "@/features/home-assistant-registry/use-home-assistant-area";
+import {
+	homeAssistantDevicesQueryOptions,
+	useHomeAssistantDevices,
+} from "@/features/home-assistant-registry/use-home-assistant-devices";
 import { ResetButton } from "@/routes/home-architect/components/reset-button";
 import { RoomProperties } from "@/routes/home-architect/components/room-properties";
 import { RoomsCanvas } from "@/routes/home-architect/components/rooms-canvas";
@@ -19,6 +22,7 @@ export const Route = createFileRoute("/home-architect/")({
 		Promise.all([
 			context.queryClient.ensureQueryData(roomsQueryOptions),
 			context.queryClient.ensureQueryData(homeAssistantAreasQueryOptions),
+			context.queryClient.ensureQueryData(homeAssistantDevicesQueryOptions),
 		]),
 	component: RouteComponent,
 });

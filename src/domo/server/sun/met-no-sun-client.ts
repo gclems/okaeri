@@ -1,28 +1,5 @@
+import type { MetNoSun } from "#/interfaces/metno";
 import { getDomoServerConfig } from "#/server/config";
-
-export interface MetNoSun {
-	properties: {
-		body: "Sun";
-		sunrise: {
-			time: string;
-			azimuth: number;
-		};
-		sunset: {
-			time: string;
-			azimuth: number;
-		};
-		solarnoon: {
-			time: string;
-			disc_centre_elevation: number;
-			visible: boolean;
-		};
-		solarmidnight: {
-			time: string;
-			disc_centre_elevation: number;
-			visible: boolean;
-		};
-	};
-}
 
 export async function fetchSun(date: Date): Promise<MetNoSun> {
 	const domoConfig = getDomoServerConfig();

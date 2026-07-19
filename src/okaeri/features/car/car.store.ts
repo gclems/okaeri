@@ -1,26 +1,14 @@
-import { create } from "zustand";
-
 import type { DomoCarSnapshot } from "#/shared/car-types";
+import { useDomoStore } from "@/features/domo-store";
 
-type ConnectionState = "idle" | "connecting" | "connected" | "error";
+const emptySnapshot: DomoCarSnapshot = {
+	revision: 0,
+	car: null,
+	carSetting: null,
+};
 
-interface CarState {
-	snapshot: DomoCarSnapshot | null;
-	connectionState: ConnectionState;
-
-	setSnapshot: (snapshot: DomoCarSnapshot) => void;
-	setConnectionState: (state: ConnectionState) => void;
-}
-
-export const useCarStore = create<CarState>((set) => ({
-	snapshot: null,
-	connectionState: "idle",
-
-	setSnapshot: (snapshot) => {
-		set({ snapshot });
-	},
-
-	setConnectionState: (connectionState) => {
-		set({ connectionState });
-	},
-}));
+export const useCarStore = () =>
+	useDomoStore(
+		(state) =>
+			(state.snapshots.car as DomoCarSnapshot | undefined) ?? emptySnapshot,
+	);

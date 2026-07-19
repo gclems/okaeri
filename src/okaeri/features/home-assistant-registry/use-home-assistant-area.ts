@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getHomeAssistantAreas } from "#/server/registry/registry-functions";
+import { getHomeAssistantAreas } from "#/server/home-assistant-registry/home-assistant-registry-functions";
 
 export const homeAssistantAreasQueryOptions = {
 	queryKey: ["home-assistant-areas"],

@@ -10,7 +10,8 @@ import {
 	mapThermometer,
 } from "#/server/environment/environment-mapper";
 import type { HomeAssistantClient } from "#/server/home-assistant-client";
-import type { RegistryService } from "#/server/registry/registry-service";
+import type { HomeAssistantRegistryService } from "#/server/home-assistant-registry/home-assistant-registry-service";
+import { HomeAssistantService } from "#/server/home-assistant-service";
 import type {
 	ApparentTemperature,
 	DomoBarometer,
@@ -23,21 +24,13 @@ import type {
 export type EnvironmentListener = (snapshot: DomoEnvironmentSnapshot) => void;
 
 type EnvironmentMeasurement = DomoThermometer | DomoHygrometer | DomoBarometer;
-export class EnvironmentService {
-	private snapshot: DomoEnvironmentSnapshot = {
-		sensors: {},
-		revision: 0,
-	};
 
-	private readonly listeners = new Set<EnvironmentListener>();
-
+export class EnvironmentService extends HomeAssistantService<DomoEnvironmentSnapshot> {
 	public constructor(
-		private readonly homeAssistant: HomeAssistantClient,
-		private readonly registry: RegistryService,
-	) {}
-
-	public getSnapshot(): DomoEnvironmentSnapshot {
-		return this.snapshot;
+		homeAssistant: HomeAssistantClient,
+		registry: HomeAssistantRegistryService,
+	) {
+		super("environment", homeAssistant, registry);
 	}
 
 	public getAll(): readonly DomoEnvironmentSensor[] {
@@ -50,15 +43,7 @@ export class EnvironmentService {
 		);
 	}
 
-	public subscribe(listener: EnvironmentListener): () => void {
-		this.listeners.add(listener);
-
-		return () => {
-			this.listeners.delete(listener);
-		};
-	}
-
-	public synchronize(entities: HassEntities): void {
+	public synchronize(entities: HassEntities): boolean {
 		const sensors: Record<string, DomoEnvironmentSensor> = {};
 
 		for (const entity of Object.values(entities)) {
@@ -66,7 +51,7 @@ export class EnvironmentService {
 				continue;
 			}
 
-			const registryEntity = this.registry.resolveEntity(entity.entity_id);
+			const registryEntity = this.registry.resolveEntityRegistry(entity.entity_id);
 			if (!registryEntity.device) {
 				continue;
 			}
@@ -74,7 +59,7 @@ export class EnvironmentService {
 			if (!sensors[registryEntity.device.id]) {
 				sensors[registryEntity.device.id] = {
 					id: registryEntity.device.id,
-					areaId: registryEntity.area?.area_id ?? "",
+					areaId: registryEntity.area?.id ?? "",
 					deviceId: registryEntity.device.id,
 
 					thermometer: null,
@@ -107,7 +92,7 @@ export class EnvironmentService {
 		const sensorsAreEqual = this.areEntitiesEqual(this.snapshot.sensors, sensors);
 
 		if (sensorsAreEqual) {
-			return;
+			return false;
 		}
 
 		this.snapshot = {
@@ -115,20 +100,14 @@ export class EnvironmentService {
 			revision: this.snapshot.revision + 1,
 		};
 
-		this.emit();
-	}
-
-	private emit(): void {
-		for (const listener of this.listeners) {
-			listener(this.snapshot);
-		}
+		return true;
 	}
 
 	private areEntitiesEqual(
 		previous: Readonly<Record<string, DomoEnvironmentSensor>>,
 		next: Readonly<Record<string, DomoEnvironmentSensor>>,
 	): boolean {
-		const previousIds = Object.keys(previous);
+		const previousIds = Object.keys(previous ?? {});
 		const nextIds = Object.keys(next);
 
 		if (previousIds.length !== nextIds.length) {
@@ -165,11 +144,6 @@ function areMeasurementsEqual(
 	}
 
 	return (
-		a.id === b.id &&
-		a.name === b.name &&
-		a.domain === b.domain &&
-		a.device_id === b.device_id &&
-		a.area_id === b.area_id &&
 		a.deviceClass === b.deviceClass &&
 		a.unitOfMeasurement === b.unitOfMeasurement &&
 		Object.is(a.value, b.value) &&

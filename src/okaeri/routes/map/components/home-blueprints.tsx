@@ -8,9 +8,9 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Dialog, Fieldset, Separator, cn } from "shanty-ui";
 
+import type { DomoLightBulb } from "#/interfaces/lighting";
 import type { Room } from "#/shared/architect-types";
 import type { DomoEnvironmentSensor } from "#/shared/environment-types";
-import type { DomoLightBulb } from "#/shared/lighting-types";
 import { LastUpdatedDescription } from "@/components/last-updated-description";
 import { QueryLoader } from "@/components/query-loader";
 import { useRooms } from "@/features/architect/use-rooms";
@@ -38,7 +38,7 @@ function HomeBlueprints() {
 						lightBulbsByRoom[room.id] = [];
 						if (room.haAreaId) {
 							lightBulbsByRoom[room.id] =
-								lightBulbs.filter((bulb) => bulb.area_id === room.haAreaId) ?? [];
+								lightBulbs.filter((bulb) => bulb.areaId === room.haAreaId) ?? [];
 						}
 					});
 
@@ -56,7 +56,7 @@ function HomeBlueprints() {
 										key={room.id}
 										room={room}
 										lightBulbs={lightBulbsByRoom[room.id]}
-										environmentSensor={environmentSensors.find(
+										environmentSensor={Object.values(environmentSensors).find(
 											(sensor) => sensor.id === room.haEnvironmentSensorDeviceId,
 										)}
 									/>
@@ -79,7 +79,7 @@ function RoomDrawing({
 	lightBulbs: DomoLightBulb[];
 	environmentSensor?: DomoEnvironmentSensor;
 }) {
-	const lightsOnCount = lightBulbs.filter((bulb) => bulb.state === "on").length;
+	const lightsOnCount = lightBulbs.filter((bulb) => bulb.isOn).length;
 
 	return (
 		<Dialog>

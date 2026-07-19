@@ -22,7 +22,7 @@ function RoomProperties() {
 			label: "Aucune",
 		},
 		...haAreas.map((area) => ({
-			value: area.area_id,
+			value: area.id,
 			label: area.name,
 		})),
 	];
@@ -39,12 +39,7 @@ function RoomProperties() {
 		...haDevices
 			.map((device) => ({
 				value: device.id,
-				label:
-					device.name_by_user ||
-					device.name ||
-					device.model ||
-					device.manufacturer ||
-					device.id,
+				label: device.name,
 			}))
 			.sort((a, b) => a.label.localeCompare(b.label)),
 	];

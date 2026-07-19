@@ -1,3 +1,4 @@
+import type { DomoServiceSnapshot } from "#/server/domo-service-snapshot";
 import type { DomoRegistryEntity } from "#/shared/hass-registry-types";
 
 interface DomoSensorEntity extends DomoRegistryEntity {
@@ -39,7 +40,7 @@ export interface DomoEnvironmentSensor {
 	apparentTemperature: ApparentTemperature | null;
 }
 
-export interface DomoEnvironmentSnapshot {
+export type DomoEnvironmentSnapshot = DomoServiceSnapshot & {
 	sensors: Readonly<Record<string, DomoEnvironmentSensor>>;
 	revision: number;
-}
+};

@@ -1,6 +1,6 @@
 import type { HassEntity } from "home-assistant-js-websocket";
 
-import type { ResolvedEntityRegistry } from "#/server/registry/registry-service";
+import type { ResolvedEntityRegistry } from "#/server/home-assistant-registry/home-assistant-registry-service";
 import type {
 	DomoBarometer,
 	DomoHygrometer,
@@ -23,7 +23,7 @@ function mapName(entity: HassEntity, registry: ResolvedEntityRegistry): string {
 	return (
 		registry.entity?.name ??
 		getStringAttribute(entity, "friendly_name") ??
-		registry.entity?.original_name ??
+		registry.entity?.name ??
 		entity.entity_id
 	);
 }
@@ -68,7 +68,7 @@ export function mapThermometer(
 		domain: "sensor",
 
 		device_id: registry.device?.id ?? null,
-		area_id: registry.area?.area_id ?? null,
+		area_id: registry.area?.id ?? null,
 
 		name: mapName(entity, registry),
 		deviceClass: "temperature",
@@ -92,7 +92,7 @@ export function mapHygrometer(
 		domain: "sensor",
 
 		device_id: registry.device?.id ?? null,
-		area_id: registry.area?.area_id ?? null,
+		area_id: registry.area?.id ?? null,
 
 		name: mapName(entity, registry),
 		deviceClass: "humidity",
@@ -116,7 +116,7 @@ export function mapBarometer(
 		domain: "sensor",
 
 		device_id: registry.device?.id ?? null,
-		area_id: registry.area?.area_id ?? null,
+		area_id: registry.area?.id ?? null,
 
 		name: mapName(entity, registry),
 		deviceClass: "pressure",

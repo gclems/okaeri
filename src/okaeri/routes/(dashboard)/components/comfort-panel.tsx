@@ -15,19 +15,21 @@ import { useEnvironmentSensors } from "@/features/environment/use-environment-se
 
 function ComfortPanel() {
 	const roomsQuery = useRooms();
-	const environmentDevices = useEnvironmentSensors();
+	const environmentDevices = Object.values(useEnvironmentSensors());
 
 	return (
 		<Fieldset legend="Confort">
 			<QueryLoader queries={[roomsQuery]}>
 				{([rooms]) => {
-					const roomsWithHaArea = rooms.filter(
-						(room) =>
-							room.haEnvironmentSensorDeviceId &&
-							environmentDevices.some(
-								(device) => device.id === room.haEnvironmentSensorDeviceId,
-							),
-					);
+					const roomsWithHaArea = rooms
+						.filter(
+							(room) =>
+								room.haEnvironmentSensorDeviceId &&
+								environmentDevices.some(
+									(device) => device.id === room.haEnvironmentSensorDeviceId,
+								),
+						)
+						.sort((a, b) => a.name.localeCompare(b.name));
 
 					return (
 						<div className="space-y-4">

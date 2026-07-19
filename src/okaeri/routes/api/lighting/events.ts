@@ -1,81 +1,44 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { getDomo } from "#/server/instance";
+import type { DomoLightingSnapshot } from "#/server/lighting/lighting-service";
+import { createSseResponse } from "@/helpers/sse";
 
 export const Route = createFileRoute("/api/lighting/events")({
 	server: {
 		handlers: {
 			GET: async ({ request }) => {
 				const domo = getDomo();
+				await domo.start();
 
-				await domo.whenReady();
+				return createSseResponse(request, {
+					subscribe: (send) =>
+						domo.lighting.subscribe(() => {
+							send({
+								id: domo.lighting.getSnapshot().revision,
+								event: "lighting.updated",
+								data: serializeLightingSnapshot(domo.lighting.getSnapshot()),
+							});
+						}),
 
-				const encoder = new TextEncoder();
-				let cleanup = () => {};
+					initialEvent: () => {
+						const snapshot = domo.lighting.getSnapshot();
 
-				const stream = new ReadableStream<Uint8Array>({
-					start(controller) {
-						let closed = false;
-						let heartbeat: ReturnType<typeof setInterval> | undefined;
-
-						const sendSnapshot = () => {
-							const snapshot = domo.lighting.getSnapshot();
-
-							controller.enqueue(
-								encoder.encode(
-									`id: ${snapshot.revision}\ndata: ${JSON.stringify(snapshot)}\n\n`,
-								),
-							);
+						return {
+							id: snapshot.revision,
+							event: "lighting.updated",
+							data: serializeLightingSnapshot(snapshot),
 						};
-
-						const unsubscribe = domo.lighting.subscribe(sendSnapshot);
-
-						cleanup = () => {
-							if (closed) {
-								return;
-							}
-
-							closed = true;
-							unsubscribe();
-
-							if (heartbeat) {
-								clearInterval(heartbeat);
-							}
-
-							request.signal.removeEventListener("abort", handleAbort);
-						};
-
-						const handleAbort = () => {
-							cleanup();
-							controller.close();
-						};
-
-						request.signal.addEventListener("abort", handleAbort, {
-							once: true,
-						});
-
-						// Envoie immédiatement le snapshot courant.
-						sendSnapshot();
-
-						// Évite que certains proxies ferment une connexion inactive.
-						heartbeat = setInterval(() => {
-							controller.enqueue(encoder.encode(": keep-alive\n\n"));
-						}, 15_000);
-					},
-
-					cancel() {
-						cleanup();
-					},
-				});
-
-				return new Response(stream, {
-					headers: {
-						"Content-Type": "text/event-stream",
-						"Cache-Control": "no-cache, no-transform",
-						"X-Accel-Buffering": "no",
 					},
 				});
 			},
 		},
 	},
 });
+
+function serializeLightingSnapshot(snapshot: DomoLightingSnapshot) {
+	return {
+		lights: Array.from(snapshot.lights.values()),
+		lightGroups: Array.from(snapshot.lightGroups.values()),
+	};
+}

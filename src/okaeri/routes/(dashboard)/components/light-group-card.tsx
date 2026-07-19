@@ -4,8 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "motion/react";
 import { Card, Popover, Switch, cn } from "shanty-ui";
 
+import type { DomoLightGroup } from "#/interfaces/lighting";
 import { toggleLight } from "#/server/lighting/lighting-functions";
-import type { DomoLightGroup } from "#/shared/lighting-types";
 import { AnimatedNumber } from "@/components/animated-number";
 import { QueryLoader } from "@/components/query-loader";
 import { useRooms } from "@/features/architect/use-rooms";
@@ -24,25 +24,23 @@ function LightGroupCard({ group }: { group: DomoLightGroup }) {
 		<Card
 			size="xs"
 			className={cn("transition-color duration-300", {
-				"bg-surface/20": group.state !== "on",
+				"bg-surface/20": !group.isOn,
 			})}
 		>
 			<Card.Body>
 				<div className="flex gap-x-2 items-baseline">
 					<div
 						className={cn("w-8 text-xl", {
-							"text-energy": group.state === "on",
+							"text-energy": group.isOn,
 						})}
 					>
-						<FontAwesomeIcon
-							icon={group.state === "on" ? faLightbulb : farLightbulb}
-						/>
+						<FontAwesomeIcon icon={group.isOn ? faLightbulb : farLightbulb} />
 					</div>
 					<div className="flex-1 flex gap-x-2 items-baseline">
 						<div className="text-heading">
 							<QueryLoader queries={[roomsQuery]}>
 								{([rooms]) => {
-									const room = rooms.find((room) => room.haAreaId === group.area_id);
+									const room = rooms.find((room) => room.haAreaId === group.areaId);
 
 									return room?.name || group.name;
 								}}
@@ -51,22 +49,22 @@ function LightGroupCard({ group }: { group: DomoLightGroup }) {
 						<div className="text-xs overflow-hidden">
 							<AnimatePresence mode="popLayout" initial={false}>
 								<motion.span
-									key={group.state === "on" ? "on" : "off"}
+									key={group.isOn ? "on" : "off"}
 									className="block"
 									initial={{ y: "100%", opacity: 0 }}
 									animate={{ y: 0, opacity: 1 }}
 									exit={{ y: "-100%", opacity: 0 }}
 									transition={{ duration: 0.15 }}
 								>
-									{group.state === "on" ? "allumé" : "éteint"}
+									{group.isOn ? "allumé" : "éteint"}
 								</motion.span>
 							</AnimatePresence>
 						</div>
 					</div>
 					<div>
 						<Switch
-							color={group.state === "on" ? "warning" : "neutral"}
-							checked={group.state === "on"}
+							color={group.isOn ? "warning" : "neutral"}
+							checked={group.isOn}
 							onCheckedChange={() => handleClick()}
 						/>
 					</div>
@@ -74,7 +72,7 @@ function LightGroupCard({ group }: { group: DomoLightGroup }) {
 
 				<div className="flex justify-end items-center mt-2 gap-x-1">
 					{lights.map((light) => {
-						const isOn = light.state === "on" && !!light.color;
+						const isOn = light.isOn && !!light.color;
 						return (
 							<Popover key={light.id}>
 								<Popover.Trigger
@@ -97,7 +95,7 @@ function LightGroupCard({ group }: { group: DomoLightGroup }) {
 													}
 										}
 									>
-										{light.state !== "on" && <span className="rotate-45">|</span>}
+										{!light.isOn && <span className="rotate-45">|</span>}
 									</div>
 									<div className="text-xs text-metric">
 										<AnimatedNumber

@@ -5,11 +5,11 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { Button, Fieldset, Label, Select } from "shanty-ui";
 import { z } from "zod";
 
+import type { HomeAssistantDevice } from "#/interfaces/home-assistant";
 import { persistSettings } from "#/server/settings/settings-functions";
 import type { Setting } from "#/server/settings/settings-types";
-import type { HassDeviceRegistryEntry } from "#/shared/hass-registry-types";
 import { QueryLoader } from "@/components/query-loader";
-import { useHomeAssistantDevices } from "@/features/registry/use-home-assistant-devices";
+import { useHomeAssistantDevices } from "@/features/home-assistant-registry/use-home-assistant-devices";
 import {
 	settingsQueryOptions,
 	useSettings,
@@ -46,7 +46,7 @@ function SettingsForm({
 	homeAssistantDevices,
 }: {
 	settings: Setting[];
-	homeAssistantDevices: HassDeviceRegistryEntry[];
+	homeAssistantDevices: HomeAssistantDevice[];
 }) {
 	const queryClient = useQueryClient();
 	const saveMutation = useMutation({
@@ -83,7 +83,7 @@ function SettingsForm({
 
 	const devicesOptions = homeAssistantDevices
 		.map((device) => ({
-			label: device.name_by_user ?? device.name ?? device.id,
+			label: device.name,
 			value: device.id,
 		}))
 		.sort((a, b) => a.label.localeCompare(b.label));

@@ -7,7 +7,7 @@ export const loadSun = createServerFn({
 }).handler(async () => {
 	const domo = getDomo();
 
-	await domo.whenReady();
+	await domo.start();
 
 	return domo.sun.getSnapshot();
 });

@@ -11,9 +11,9 @@ function CarPanel() {
 	return (
 		<Fieldset
 			legend={
-				<div className="flex gap-x-8 justify-between">
-					<div className="flex-1 truncate">{car.name}</div>
+				<div className="flex gap-x-4 justify-between">
 					<img src="/renault_4_small.png" alt="Renault 4" className="h-6 w-auto" />
+					<div className="flex-1 truncate">{car.name}</div>
 				</div>
 			}
 		>

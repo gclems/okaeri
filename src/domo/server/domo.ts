@@ -1,31 +1,30 @@
-import type {
-	HassEntities,
-	HassEntity,
-	MessageBase,
-} from "home-assistant-js-websocket";
+import type { HassEntities, MessageBase } from "home-assistant-js-websocket";
 
 import { CarService } from "#/server/car/car-service";
+import type { DomoServiceSnapshot } from "#/server/domo-service-snapshot";
 import { EnvironmentService } from "#/server/environment/environment-service";
 import {
 	HomeAssistantClient,
 	type HomeAssistantClientOptions,
 } from "#/server/home-assistant-client";
+import { HomeAssistantRegistryService } from "#/server/home-assistant-registry/home-assistant-registry-service";
+import type { HomeAssistantSynchronizable } from "#/server/home-assistant-service";
 import { LightingService } from "#/server/lighting/lighting-service";
-import { RegistryService } from "#/server/registry/registry-service";
 import { SunService } from "#/server/sun/sun-service";
-import type {
-	DomoEntityState,
-	DomoSnapshot,
-} from "#/shared/home-assistant-types";
+import type { DomoSnapshot } from "#/shared/home-assistant-types";
 
 export type DomoListener = (snapshot: DomoSnapshot) => void;
 
+export type DomoServiceListener = (
+	snapshots: Record<string, DomoServiceSnapshot>,
+) => void;
+
 export class Domo {
-	public readonly registry: RegistryService;
-	public readonly lighting: LightingService;
-	public readonly environment: EnvironmentService;
+	public readonly homeAssistantRegistry: HomeAssistantRegistryService;
 	public readonly sun: SunService;
-	public readonly car: CarService;
+
+	private readonly homeAssistant: HomeAssistantClient;
+	private readonly homeAssistantServices: HomeAssistantSynchronizable[];
 
 	private snapshot: DomoSnapshot = {
 		connectionState: "idle",
@@ -35,48 +34,40 @@ export class Domo {
 	};
 
 	private readonly listeners = new Set<DomoListener>();
-	private startPromise: Promise<void> | null = null;
+	private readonly serviceSnapshotsListeners = new Set<DomoServiceListener>();
 
-	private readonly homeAssistant: HomeAssistantClient;
+	private startPromise: Promise<void> | null = null;
+	private homeAssistantRegistryReady = false;
+	private pendingHomeAssistantEntities: HassEntities | null = null;
 
 	public constructor(options: HomeAssistantClientOptions) {
 		this.homeAssistant = new HomeAssistantClient(options, {
-			onConnectionReady: async () => {
-				await this.registry.load();
-			},
-
-			onConnected: () => {
-				this.updateSnapshot({
-					connectionState: "connected",
-					error: null,
-				});
-			},
-
-			onDisconnected: async () => {
+			onDisconnected: () => {
 				this.updateSnapshot({
 					connectionState: "disconnected",
 				});
 			},
 
 			onEntitiesChanged: (entities) => {
-				this.handleHomeAssistantEntities(entities);
+				this.handleHomeAssistantStatesUpdate(entities);
 			},
 
 			onError: (error) => {
-				console.error("[Domo] Home Assistant error", error);
-
-				this.updateSnapshot({
-					connectionState: "error",
-					error: this.getErrorMessage(error),
-				});
+				this.handleHomeAssistantError(error);
 			},
 		});
 
-		this.registry = new RegistryService(this.homeAssistant);
-		this.lighting = new LightingService(this.homeAssistant, this.registry);
-		this.environment = new EnvironmentService(this.homeAssistant, this.registry);
+		this.homeAssistantRegistry = new HomeAssistantRegistryService(
+			this.homeAssistant,
+		);
+
+		this.homeAssistantServices = [
+			new LightingService(this.homeAssistant, this.homeAssistantRegistry),
+			new EnvironmentService(this.homeAssistant, this.homeAssistantRegistry),
+			new CarService(this.homeAssistant, this.homeAssistantRegistry),
+		];
+
 		this.sun = new SunService();
-		this.car = new CarService(this.homeAssistant, this.registry);
 	}
 
 	public async start(): Promise<void> {
@@ -88,38 +79,20 @@ export class Domo {
 			return this.startPromise;
 		}
 
-		this.updateSnapshot({
-			connectionState: "connecting",
-			error: null,
+		this.startPromise = this.initialize().finally(() => {
+			this.startPromise = null;
 		});
-
-		this.startPromise = this.homeAssistant
-			.connect(async () => {
-				await this.registry.load();
-			})
-			.finally(() => {
-				this.startPromise = null;
-			});
 
 		return this.startPromise;
 	}
 
-	public async whenReady(): Promise<void> {
-		if (this.snapshot.connectionState === "connected") {
-			return;
-		}
-
-		if (this.startPromise) {
-			return this.startPromise;
-		}
-
-		throw new Error(
-			this.snapshot.error ?? "Domo is not connected to Home Assistant.",
-		);
-	}
-
 	public stop(): void {
 		this.homeAssistant.disconnect();
+
+		this.updateSnapshot({
+			connectionState: "idle",
+			error: null,
+		});
 	}
 
 	public getSnapshot(): DomoSnapshot {
@@ -134,46 +107,108 @@ export class Domo {
 		};
 	}
 
-	public async sendHomeAssistantCommand<TResult>(
+	public getServicesSnapshot(): Record<string, DomoServiceSnapshot> {
+		const snapshots: Record<string, DomoServiceSnapshot> = {};
+
+		for (const service of this.homeAssistantServices) {
+			snapshots[service.eventName] = service.getSnapshot();
+		}
+
+		return snapshots;
+	}
+
+	public subscribeToServiceSnapshots(listener: DomoServiceListener): () => void {
+		this.serviceSnapshotsListeners.add(listener);
+
+		return () => {
+			this.serviceSnapshotsListeners.delete(listener);
+		};
+	}
+
+	public sendHomeAssistantCommand<TResult>(
 		message: MessageBase,
 	): Promise<TResult> {
 		return this.homeAssistant.sendCommand<TResult>(message);
 	}
 
-	private handleHomeAssistantEntities(entities: HassEntities): void {
-		this.lighting.synchronize(entities);
-		this.environment.synchronize(entities);
-		this.car.synchronize(entities);
-
-		/*
-		 * Snapshot brut temporairement conservé pour les domaines
-		 * qui n’ont pas encore été migrés.
-		 */
-		this.replaceEntities(entities);
+	public homeAssistantService(name: string) {
+		return this.homeAssistantServices.find(
+			(service) => service.eventName === name,
+		);
 	}
 
-	private replaceEntities(entities: HassEntities): void {
-		const mappedEntities = Object.fromEntries(
-			Object.values(entities).map((entity) => [
-				entity.entity_id,
-				this.mapEntity(entity),
-			]),
+	private async initialize(): Promise<void> {
+		this.updateSnapshot({
+			connectionState: "connecting",
+			error: null,
+		});
+
+		this.homeAssistantRegistryReady = false;
+
+		try {
+			await this.homeAssistant.connect();
+
+			await this.homeAssistantRegistry.load();
+
+			this.homeAssistantRegistryReady = true;
+
+			if (this.pendingHomeAssistantEntities) {
+				const entities = this.pendingHomeAssistantEntities;
+				this.pendingHomeAssistantEntities = null;
+
+				this.synchronizeHomeAssistantServices(entities);
+			}
+
+			await this.homeAssistant.subscribeToEntities();
+
+			this.updateSnapshot({
+				connectionState: "connected",
+				error: null,
+			});
+		} catch (error) {
+			this.homeAssistantRegistryReady = false;
+			this.handleHomeAssistantError(error);
+
+			throw error;
+		}
+	}
+
+	private handleHomeAssistantStatesUpdate(entities: HassEntities): void {
+		if (!this.homeAssistantRegistryReady) {
+			this.pendingHomeAssistantEntities = entities;
+			return;
+		}
+
+		this.synchronizeHomeAssistantServices(entities);
+	}
+
+	private synchronizeHomeAssistantServices(entities: HassEntities): void {
+		const updatedServices = this.homeAssistantServices.filter((service) =>
+			service.synchronize(entities),
 		);
 
-		this.updateSnapshot({
-			entities: mappedEntities,
-			error: null,
+		if (updatedServices.length === 0) {
+			return;
+		}
+
+		const snapshots: Record<string, DomoServiceSnapshot> = {};
+
+		updatedServices.forEach((service) => {
+			snapshots[service.eventName] = service.getSnapshot();
+		});
+
+		this.serviceSnapshotsListeners.forEach((listener) => {
+			listener(snapshots);
 		});
 	}
 
-	private mapEntity(entity: HassEntity): DomoEntityState {
-		return {
-			entityId: entity.entity_id,
-			state: entity.state,
-			attributes: entity.attributes,
-			lastChanged: entity.last_changed,
-			lastUpdated: entity.last_updated,
-		};
+	private handleHomeAssistantError(error: unknown): void {
+		console.error("[Domo] Home Assistant error", error);
+
+		this.updateSnapshot({
+			connectionState: "error",
+			error: this.getErrorMessage(error),
+		});
 	}
 
 	private updateSnapshot(
