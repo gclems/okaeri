@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { AnimatePresence, motion } from "motion/react";
 
-import { RollingNumber } from "@/components/rolling-number";
+import { RollingTime } from "@/components/rolling-time";
 import { useClock } from "@/features/clock/use-clock";
 
 const INACTIVITY_DELAY = 30_000;
@@ -13,17 +13,10 @@ function ScreensaverClock() {
 	return (
 		<>
 			<img src="/logo_image.png" alt="Logo" className="max-w-64 w-full" />
-			<time className="text-metric text-[clamp(5rem,18vw,12rem)] leading-none text-foreground">
-				<RollingNumber
-					number={now.getHours()}
-					formatter={(value) => Math.round(value).toString().padStart(2, "0")}
-				/>
-				:
-				<RollingNumber
-					number={now.getMinutes()}
-					formatter={(value) => Math.round(value).toString().padStart(2, "0")}
-				/>
-			</time>
+			<RollingTime
+				date={now}
+				className="text-[clamp(5rem,18vw,12rem)] leading-none text-foreground"
+			/>
 			<p className="text-heading text-xl text-muted-foreground sm:text-2xl">
 				{now.toLocaleDateString("fr-FR", {
 					weekday: "long",

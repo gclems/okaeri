@@ -1,5 +1,6 @@
 import { faLightbulb as farLightbulb } from "@fortawesome/free-regular-svg-icons";
 import {
+	faChargingStation,
 	faLightbulb,
 	faTachometerAlt,
 	faThermometerHalf,
@@ -7,11 +8,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { RefreshCwIcon } from "lucide-react";
-import { Button, Card, cn } from "shanty-ui";
+import { Button, Card, addMinutes, cn } from "shanty-ui";
 
 import { restartDomo } from "#/server/domo-functions";
 import { QueryLoader } from "@/components/query-loader";
 import { RollingNumber } from "@/components/rolling-number";
+import { RollingTime } from "@/components/rolling-time";
 import { SunPhaseIcon } from "@/components/sun-phase-icon";
 import { useRooms } from "@/features/architect/use-rooms";
 import { useCar } from "@/features/car/use-car";
@@ -62,19 +64,7 @@ function DateTime() {
 					month: "short",
 				})}
 			</div>
-			<time className="text-metric flex items-center justify-center gap-x-1">
-				<div>
-					<RollingNumber
-						number={now.getHours()}
-						formatter={(value) => Math.round(value).toString().padStart(2, "0")}
-					/>
-					:
-					<RollingNumber
-						number={now.getMinutes()}
-						formatter={(value) => Math.round(value).toString().padStart(2, "0")}
-					/>
-				</div>
-			</time>
+			<RollingTime date={now} className="text-metric " />
 		</div>
 	);
 }
@@ -186,34 +176,35 @@ function Car() {
 
 	if (!car) return null;
 
+	const chargedAt = addMinutes(new Date(), car.remainingChargeTime);
+
 	return (
 		<div className="flex items-center gap-x-2">
 			<img src="/renault_4_small.png" alt="Renault 4" className="h-6 w-auto" />
 			<div className="flex gap-x-1">
 				<div className="flex items-center">
-					<span
-						className={cn("text-metric text-2xl font-semibold", {
-							"text-success": car.batteryLevel >= 80,
-							"text-warning": car.batteryLevel > 20 && car.batteryLevel <= 50,
-							"text-destructive": car.batteryLevel <= 20,
-						})}
-					>
-						<RollingNumber
-							number={car.batteryLevel}
-							formatter={(value) => Math.round(value).toString()}
-						/>
-						%
-					</span>
-				</div>
-				{car.charging && (
-					<div className=" text-sm flex items-end text-success text-metric">
-						<RollingNumber
-							number={car.chargingPower}
-							formatter={(value) => value.toFixed(1).toString()}
-						/>
-						{car.chargingUnitOfMeasure}
+					<div className="">
+						<span
+							className={cn("text-metric text-2xl font-semibold", {
+								"text-success": car.batteryLevel >= 80,
+								"text-warning": car.batteryLevel > 20 && car.batteryLevel <= 50,
+								"text-destructive": car.batteryLevel <= 20,
+							})}
+						>
+							<RollingNumber
+								number={car.batteryLevel}
+								formatter={(value) => Math.round(value).toString()}
+							/>
+							%
+							{car.charging && (
+								<FontAwesomeIcon
+									icon={faChargingStation}
+									className="text-energy text-sm"
+								/>
+							)}
+						</span>
 					</div>
-				)}
+				</div>
 			</div>
 		</div>
 	);

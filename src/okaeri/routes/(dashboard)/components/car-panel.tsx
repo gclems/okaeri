@@ -1,12 +1,17 @@
 import {
+	faArrowRight,
+	faBatteryEmpty,
+	faBatteryFull,
 	faBatteryHalf,
+	faBatteryQuarter,
 	faChargingStation,
 	faRoad,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Card, Fieldset } from "shanty-ui";
+import { Card, Fieldset, addMinutes } from "shanty-ui";
 
 import { RollingNumber } from "@/components/rolling-number";
+import { RollingTime } from "@/components/rolling-time";
 import { useCar } from "@/features/car/use-car";
 
 function CarPanel() {
@@ -16,6 +21,19 @@ function CarPanel() {
 
 	const hours = Math.floor(car.remainingChargeTime / 60);
 	const minutes = car.remainingChargeTime % 60;
+	const chargedAt = addMinutes(new Date(), car.remainingChargeTime);
+
+	let batteryIcon = faBatteryEmpty;
+	if (car.batteryLevel > 15) {
+		batteryIcon = faBatteryQuarter;
+	}
+	if (car.batteryLevel > 25) {
+		batteryIcon = faBatteryHalf;
+	}
+	if (car.batteryLevel >= 80) {
+		batteryIcon = faBatteryFull;
+	}
+
 	return (
 		<Fieldset
 			legend={
@@ -29,7 +47,7 @@ function CarPanel() {
 				<Card size="xs">
 					<Card.Body>
 						<div className="text-xl flex items-baseline gap-x-1">
-							<FontAwesomeIcon icon={faBatteryHalf} className="-rotate-90" />
+							<FontAwesomeIcon icon={batteryIcon} className="-rotate-90" />
 							<div className="flex items-baseline gap-x-2">
 								<div className="flex items-baseline">
 									<span className="text-metric">
@@ -59,14 +77,16 @@ function CarPanel() {
 				{car.charging && (
 					<Card size="xs">
 						<Card.Body>
-							<div className="flex items-baseline gap-x-1">
+							<div className="flex items-center gap-x-1">
 								<FontAwesomeIcon icon={faChargingStation} />
-								<div className="">
-									<span className="text-metric">
-										{String(hours).padStart(2, "0")}h{String(minutes).padStart(2, "0")}m
-									</span>
-									<span> restant</span>
-								</div>
+								<FontAwesomeIcon icon={faArrowRight} />
+								<RollingTime date={chargedAt} />
+							</div>
+							<div>
+								<span className="text-metric">
+									{String(hours).padStart(2, "0")}h{String(minutes).padStart(2, "0")}m
+								</span>
+								<span> restant</span>
 							</div>
 						</Card.Body>
 					</Card>
