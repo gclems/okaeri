@@ -50,8 +50,8 @@ export function LightGroupsPanel() {
 				</div>
 			}
 		>
-			<div className="space-y-4">
-				<ul className="space-y-2">
+			<div>
+				<ul className="grid grid-cols-2 gap-4">
 					{lightGroups.map((group) => (
 						<li key={group.id}>
 							<LightGroupCard group={group} />

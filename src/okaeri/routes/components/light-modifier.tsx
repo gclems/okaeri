@@ -42,7 +42,7 @@ function LightModifier({ lightBulb }: { lightBulb: DomoLightBulb }) {
 
 		setLightColorAndBrightness({
 			data: {
-				entityId: lightBulb.name,
+				entityId: lightBulb.id,
 				color: value.color,
 				brightness: value.brightness,
 			},
@@ -50,7 +50,7 @@ function LightModifier({ lightBulb }: { lightBulb: DomoLightBulb }) {
 	};
 
 	const handleSwitchChange = () => {
-		toggleLight({ data: { entityId: lightBulb.name } });
+		toggleLight({ data: { entityId: lightBulb.id } });
 	};
 
 	return (

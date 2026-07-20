@@ -79,8 +79,8 @@ export function mapHomeAssistantLight(
 	}
 
 	return {
-		id: registryEntity.entity.id,
-		name: registryEntity.entity.name,
+		id: entity.entity_id,
+		name: registryEntity.device?.name ?? registryEntity.entity.name,
 		areaId: registryEntity.area?.id ?? null,
 		deviceId: registryEntity.device?.id ?? null,
 		lastStateUpdated: new Date(entity.last_changed),
@@ -103,7 +103,7 @@ export function mapHomeAssistantLightGroup(
 	return {
 		id: entity.entity_id,
 
-		name: registryEntity.entity.name,
+		name: registryEntity.device?.name ?? registryEntity.entity.name,
 
 		areaId: registryEntity.area?.id ?? null,
 		deviceId: registryEntity.device?.id ?? null,

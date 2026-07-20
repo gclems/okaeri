@@ -5,5 +5,5 @@ export function useLightBulbs(group?: DomoLightGroup): DomoLightBulb[] {
 	const { lights } = useLightingStore();
 
 	if (!group) return Object.values(lights);
-	return Object.values(lights).filter((l) => group.lightNames.includes(l.name));
+	return Object.values(lights).filter((l) => group.lightNames.includes(l.id));
 }
