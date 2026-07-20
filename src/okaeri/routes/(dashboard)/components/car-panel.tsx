@@ -4,8 +4,8 @@ import {
 	faBatteryFull,
 	faBatteryHalf,
 	faBatteryQuarter,
+	faCarBurst,
 	faChargingStation,
-	faRoad,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Card, Fieldset, addMinutes } from "shanty-ui";
@@ -68,7 +68,7 @@ function CarPanel() {
 				<Card size="xs">
 					<Card.Body>
 						<div className="flex items-center gap-x-1">
-							<FontAwesomeIcon icon={faRoad} />
+							<FontAwesomeIcon icon={faCarBurst} />
 							<div className="text-metric">{car.totalMileage}</div>
 							<span className="text-sm">Km</span>
 						</div>

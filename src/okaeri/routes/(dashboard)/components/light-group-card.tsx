@@ -29,11 +29,20 @@ function LightGroupCard({ group }: { group: DomoLightGroup }) {
 			<Card.Body>
 				<div className="flex items-center gap-x-2">
 					<div
-						className={cn(" text-3xl", {
+						className={cn("cursor-pointer text-3xl", {
 							"text-energy": group.isOn,
 						})}
+						onMouseDown={(e) => {
+							e.preventDefault();
+							handleClick();
+						}}
 					>
-						<FontAwesomeIcon icon={group.isOn ? faLightbulb : farLightbulb} />
+						<FontAwesomeIcon
+							icon={group.isOn ? faLightbulb : farLightbulb}
+							className={cn({
+								"text-muted": !group.isOn,
+							})}
+						/>
 						<Switch
 							color={group.isOn ? "warning" : "neutral"}
 							checked={group.isOn}
@@ -51,7 +60,7 @@ function LightGroupCard({ group }: { group: DomoLightGroup }) {
 							</QueryLoader>
 						</div>
 
-						<div className="flex justify-end items-center mt-2">
+						<div className="flex justify-start items-center mt-2 gap-x-2">
 							{lights.map((light) => {
 								const isOn = light.isOn && !!light.color;
 								return (
@@ -59,7 +68,7 @@ function LightGroupCard({ group }: { group: DomoLightGroup }) {
 										<Popover.Trigger
 											render={<div />}
 											nativeButton={false}
-											className="w-6 flex flex-col items-center cursor-pointer"
+											className="w-fit flex flex-col items-center cursor-pointer"
 										>
 											<div
 												key={isOn ? "on" : "off"}
