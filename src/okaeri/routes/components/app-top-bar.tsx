@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { RefreshCwIcon } from "lucide-react";
 import { Button, Card, cn } from "shanty-ui";
 
+import { restartDomo } from "#/server/domo-functions";
 import { QueryLoader } from "@/components/query-loader";
 import { RollingNumber } from "@/components/rolling-number";
 import { SunPhaseIcon } from "@/components/sun-phase-icon";
@@ -32,7 +33,10 @@ function AppTopBar() {
 							variant="ghost"
 							color="neutral"
 							size="sm"
-							onClick={() => window.location.reload()}
+							onClick={async () => {
+								await restartDomo();
+								window.location.reload();
+							}}
 						>
 							<RefreshCwIcon />
 						</Button>

@@ -137,6 +137,11 @@ export class Domo {
 		);
 	}
 
+	public async restart() {
+		this.stop();
+		await this.start();
+	}
+
 	private async initialize(): Promise<void> {
 		this.updateSnapshot({
 			connectionState: "connecting",

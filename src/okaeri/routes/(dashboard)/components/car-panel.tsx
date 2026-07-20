@@ -14,7 +14,6 @@ function CarPanel() {
 
 	if (!car) return null;
 
-	const remainingChargeTime = car.remainingChargeTime ?? 0;
 	const hours = Math.floor(car.remainingChargeTime / 60);
 	const minutes = car.remainingChargeTime % 60;
 	return (
