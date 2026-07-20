@@ -15,8 +15,6 @@ function LightGroupCard({ group }: { group: DomoLightGroup }) {
 	const lights = useLightBulbs(group);
 	const roomsQuery = useRooms();
 
-	// console.log({ group, lights });
-
 	const handleClick = () => {
 		toggleLight({ data: { entityId: group.id } });
 	};

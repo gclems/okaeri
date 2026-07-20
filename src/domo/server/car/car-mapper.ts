@@ -72,7 +72,5 @@ export function mapCar(
 		}
 	}
 
-	// console.log("carEntities", carEntities);
-
 	return car;
 }
