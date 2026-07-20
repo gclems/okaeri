@@ -1,17 +1,17 @@
 import { eq, inArray } from "drizzle-orm";
 
+import type { DomoSetting } from "#/interfaces/settings";
 import { db } from "#/server/db/client";
 import { settingTable } from "#/server/db/schema";
 import { settingRowToSetting } from "#/server/settings/settings-mapper";
-import type { Setting } from "#/server/settings/settings-types";
 
-export async function findAllSettings(): Promise<Setting[]> {
+export async function findAllSettings(): Promise<DomoSetting[]> {
 	const rows = await db.select().from(settingTable).orderBy(settingTable.key);
 
 	return rows.map(settingRowToSetting);
 }
 
-export async function findSetting(key: string): Promise<Setting | null> {
+export async function findSetting(key: string): Promise<DomoSetting | null> {
 	const row = await db
 		.select()
 		.from(settingTable)
@@ -20,7 +20,7 @@ export async function findSetting(key: string): Promise<Setting | null> {
 	return row ? settingRowToSetting(row) : null;
 }
 
-export async function upsertSettings(settings: Setting[]): Promise<void> {
+export async function upsertSettings(settings: DomoSetting[]): Promise<void> {
 	const now = new Date();
 	db.transaction((transaction) => {
 		const keys = settings.map((setting) => setting.key);

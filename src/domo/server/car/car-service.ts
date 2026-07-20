@@ -34,7 +34,18 @@ export class CarService extends HomeAssistantService<DomoCarSnapshot> {
 			this.snapshot?.carSetting ?? (await findSettingByKey("car_device_id"));
 
 		if (!carSetting || !carSetting.value) {
-			return false;
+			const changed =
+				this.snapshot.carSetting !== null || this.snapshot.car !== null;
+
+			if (changed) {
+				this.snapshot = {
+					carSetting: null,
+					car: null,
+					revision: this.snapshot.revision + 1,
+				};
+			}
+
+			return changed;
 		}
 
 		const device = this.registry.devices.get(carSetting.value);

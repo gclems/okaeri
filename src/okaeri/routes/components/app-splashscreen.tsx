@@ -1,9 +1,13 @@
 import { AnimatePresence, motion } from "motion/react";
+import { Button } from "shanty-ui";
 
-import { useSplashscreen } from "./use-splash-screen";
+import { restartDomo } from "#/server/domo-functions";
+import { useDomoStore } from "@/features/domo-store";
 
 function AppSplashscreen() {
-	const { visible, transitionDuration } = useSplashscreen();
+	const domo = useDomoStore();
+
+	const visible = domo.connectionState !== "connected";
 
 	return (
 		<AnimatePresence>
@@ -13,10 +17,14 @@ function AppSplashscreen() {
 					initial={{ opacity: 1 }}
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0, scale: 1.5, filter: "blur(10px)" }}
-					transition={{ duration: transitionDuration, ease: "backOut" }}
+					transition={{ duration: 0.5, ease: "backOut" }}
 				>
-					<motion.img src="/logo_image.png" alt="Logo" className="max-w-64 w-full" />
-					<motion.img src="/logo_title_both.png" alt="Logo" className="max-w-72" />
+					<img src="/logo_image.png" alt="Logo" className="max-w-64 w-full" />
+					<img src="/logo_title_both.png" alt="Logo" className="max-w-72" />
+					<div>Dōmo Server: {domo.connectionState}</div>
+					{domo.connectionState === "error" && (
+						<Button onClick={() => restartDomo()}>Restart server</Button>
+					)}
 				</motion.div>
 			)}
 		</AnimatePresence>

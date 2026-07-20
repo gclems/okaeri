@@ -4,7 +4,7 @@ import {
 	faRoad,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Fieldset } from "shanty-ui";
+import { Card, Fieldset } from "shanty-ui";
 
 import { RollingNumber } from "@/components/rolling-number";
 import { useCar } from "@/features/car/use-car";
@@ -26,40 +26,50 @@ function CarPanel() {
 			}
 		>
 			<div className="grid grid-cols-2 gap-2">
-				<div className="text-xl flex items-baseline gap-x-1">
-					<FontAwesomeIcon icon={faBatteryHalf} className="-rotate-90" />
-					<div className="flex items-baseline gap-x-2">
-						<div className="flex items-baseline">
-							<span className="text-metric">
-								<RollingNumber number={car.batteryLevel} />
-							</span>
-							<span>%</span>
+				<Card size="xs">
+					<Card.Body>
+						<div className="text-xl flex items-baseline gap-x-1">
+							<FontAwesomeIcon icon={faBatteryHalf} className="-rotate-90" />
+							<div className="flex items-baseline gap-x-2">
+								<div className="flex items-baseline">
+									<span className="text-metric">
+										<RollingNumber number={car.batteryLevel} />
+									</span>
+									<span>%</span>
+								</div>
+								<div className="flex items-baseline">
+									<span className="text-metric text-sm">
+										<RollingNumber number={car.batteryLife} />
+									</span>
+									<span className="text-sm">Km</span>
+								</div>
+							</div>
 						</div>
-						<div className="flex items-baseline">
-							<span className="text-metric text-sm">
-								<RollingNumber number={car.batteryLife} />
-							</span>
+					</Card.Body>
+				</Card>
+				<Card size="xs">
+					<Card.Body>
+						<div className="flex items-center gap-x-1">
+							<FontAwesomeIcon icon={faRoad} />
+							<div className="text-metric">{car.totalMileage}</div>
 							<span className="text-sm">Km</span>
 						</div>
-					</div>
-				</div>
-
-				<div className="flex items-center gap-x-1">
-					<FontAwesomeIcon icon={faRoad} />
-					<div className="text-metric">{car.totalMileage}</div>
-					<span className="text-sm">Km</span>
-				</div>
-
+					</Card.Body>
+				</Card>
 				{car.charging && (
-					<div className="flex items-baseline gap-x-1">
-						<FontAwesomeIcon icon={faChargingStation} />
-						<div className="">
-							<span className="text-metric">
-								{String(hours).padStart(2, "0")}h{String(minutes).padStart(2, "0")}m
-							</span>
-							<span> restant</span>
-						</div>
-					</div>
+					<Card size="xs">
+						<Card.Body>
+							<div className="flex items-baseline gap-x-1">
+								<FontAwesomeIcon icon={faChargingStation} />
+								<div className="">
+									<span className="text-metric">
+										{String(hours).padStart(2, "0")}h{String(minutes).padStart(2, "0")}m
+									</span>
+									<span> restant</span>
+								</div>
+							</div>
+						</Card.Body>
+					</Card>
 				)}
 			</div>
 		</Fieldset>

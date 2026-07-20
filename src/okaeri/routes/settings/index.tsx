@@ -2,12 +2,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { Button, Fieldset, Label, Select } from "shanty-ui";
+import {
+	Button,
+	Fieldset,
+	Label,
+	Select,
+	stringIsNullOrEmpty,
+} from "shanty-ui";
 import { z } from "zod";
 
 import type { HomeAssistantDevice } from "#/interfaces/home-assistant";
+import type { DomoSetting } from "#/interfaces/settings";
 import { persistSettings } from "#/server/settings/settings-functions";
-import type { Setting } from "#/server/settings/settings-types";
 import { QueryLoader } from "@/components/query-loader";
 import { useHomeAssistantDevices } from "@/features/home-assistant-registry/use-home-assistant-devices";
 import {
@@ -36,7 +42,7 @@ function RouteComponent() {
 }
 
 const formSchema = z.object({
-	car_device_id: z.string().trim().min(1).max(100).nullable().optional(),
+	car_device_id: z.string().trim().max(100).nullable().optional(),
 });
 
 type FormType = z.infer<typeof formSchema>;
@@ -45,12 +51,12 @@ function SettingsForm({
 	settings,
 	homeAssistantDevices,
 }: {
-	settings: Setting[];
+	settings: DomoSetting[];
 	homeAssistantDevices: HomeAssistantDevice[];
 }) {
 	const queryClient = useQueryClient();
 	const saveMutation = useMutation({
-		mutationFn: (settings: Setting[]) =>
+		mutationFn: (settings: DomoSetting[]) =>
 			persistSettings({
 				data: settings,
 			}),
@@ -72,10 +78,10 @@ function SettingsForm({
 	});
 
 	const handleSubmit: SubmitHandler<FormType> = async (data) => {
-		const settingsToSave: Setting[] = Object.entries(data).map(
+		const settingsToSave: DomoSetting[] = Object.entries(data).map(
 			([key, value]) => ({
 				key,
-				value: value ?? null,
+				value: !stringIsNullOrEmpty(value) ? value : null,
 			}),
 		);
 		await saveMutation.mutateAsync(settingsToSave);
@@ -87,6 +93,10 @@ function SettingsForm({
 			value: device.id,
 		}))
 		.sort((a, b) => a.label.localeCompare(b.label));
+	devicesOptions.unshift({
+		label: "Aucun",
+		value: "",
+	});
 
 	const carValue = form.watch("car_device_id");
 	const selectedCarOption = carValue

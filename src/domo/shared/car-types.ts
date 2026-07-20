@@ -1,5 +1,5 @@
 import type { DomoServiceSnapshot } from "#/server/domo-service-snapshot";
-import type { Setting } from "#/server/settings/settings-schemas";
+import type { Setting } from "#/server/settings/settings-validation";
 
 export interface Car {
 	name: string;

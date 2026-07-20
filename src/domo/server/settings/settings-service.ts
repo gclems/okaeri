@@ -1,10 +1,11 @@
+import type { DomoSetting } from "#/interfaces/settings";
+import type { CarService } from "#/server/car/car-service";
 import { getDomo } from "#/server/instance";
 import {
 	findAllSettings,
 	findSetting,
 	upsertSettings,
 } from "#/server/settings/settings-repository";
-import type { Setting } from "#/server/settings/settings-types";
 
 export class SettingValidationError extends Error {
 	constructor(
@@ -16,21 +17,25 @@ export class SettingValidationError extends Error {
 	}
 }
 
-export async function getSettings(): Promise<Setting[]> {
+export async function getSettings(): Promise<DomoSetting[]> {
 	return findAllSettings();
 }
 
-export async function findAllSettingsByKey(): Promise<Record<string, Setting>> {
+export async function findAllSettingsByKey(): Promise<
+	Record<string, DomoSetting>
+> {
 	return Object.fromEntries(
 		(await getSettings()).map((setting) => [setting.key, setting]),
 	);
 }
 
-export async function findSettingByKey(key: string): Promise<Setting | null> {
+export async function findSettingByKey(
+	key: string,
+): Promise<DomoSetting | null> {
 	return await findSetting(key);
 }
 
-export async function saveSettings(settings: Setting[]): Promise<void> {
+export async function saveSettings(settings: DomoSetting[]): Promise<void> {
 	await upsertSettings(settings);
-	getDomo().car.carSettingChanged();
+	(getDomo().homeAssistantService("car") as CarService)?.carSettingChanged();
 }

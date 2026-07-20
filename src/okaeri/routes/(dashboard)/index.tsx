@@ -13,10 +13,16 @@ function RouteComponent() {
 	return (
 		<div className="space-y-6 @container">
 			<div className="grid gap-4 @xl:grid-cols-2 @4xl:grid-cols-3">
-				<LightGroupsPanel />
-				<ComfortPanel />
-				<WeatherPanel />
-				<CarPanel />
+				<div className="flex flex-col gap-y-4">
+					<LightGroupsPanel />
+					<CarPanel />
+				</div>
+				<div className="flex flex-col gap-y-4">
+					<ComfortPanel />
+				</div>
+				<div className="flex flex-col gap-y-4">
+					<WeatherPanel />
+				</div>
 			</div>
 		</div>
 	);

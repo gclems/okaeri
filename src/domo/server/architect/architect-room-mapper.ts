@@ -1,6 +1,5 @@
+import type { Room } from "#/server/architect/architect-schemas";
 import type { NewRoomRow, RoomRow } from "#/server/db/schema";
-
-import type { Room } from "../../shared/architect-types";
 
 export function roomRowToRoom(row: RoomRow): Room {
 	return {

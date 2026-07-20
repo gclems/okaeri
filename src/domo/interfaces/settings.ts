@@ -1,4 +1,5 @@
-export interface DomoSetting {
-	id: string;
-	value: string | number | boolean | null;
-}
+import type { z } from "zod";
+
+import type { settingSchema } from "#/server/settings/settings-validation";
+
+export type DomoSetting = z.infer<typeof settingSchema>;

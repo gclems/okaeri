@@ -1,16 +1,13 @@
-import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import {
 	HeadContent,
 	Scripts,
 	createRootRouteWithContext,
 } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
 import { AppLayout } from "@/routes/components/app-layout";
 import { AppSplashscreen } from "@/routes/components/app-splashscreen";
 
-import TanStackQueryDevtools from "../../integrations/tanstack-query/devtools";
 import appCss from "../styles.css?url";
 
 import "@fontsource-variable/inter";
@@ -82,20 +79,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body className="relative">
-				<AppSplashscreen />
 				<AppLayout>{children}</AppLayout>
-				<TanStackDevtools
-					config={{
-						position: "bottom-right",
-					}}
-					plugins={[
-						{
-							name: "Tanstack Router",
-							render: <TanStackRouterDevtoolsPanel />,
-						},
-						TanStackQueryDevtools,
-					]}
-				/>
+				<AppSplashscreen />
 				<Scripts />
 			</body>
 		</html>

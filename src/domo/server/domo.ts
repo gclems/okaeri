@@ -38,7 +38,7 @@ export class Domo {
 
 	private startPromise: Promise<void> | null = null;
 	private homeAssistantRegistryReady = false;
-	private pendingHomeAssistantEntities: HassEntities | null = null;
+	private latestHomeAssistantEntities: HassEntities | null = null;
 
 	public constructor(options: HomeAssistantClientOptions) {
 		this.homeAssistant = new HomeAssistantClient(options, {
@@ -157,12 +157,7 @@ export class Domo {
 
 			this.homeAssistantRegistryReady = true;
 
-			if (this.pendingHomeAssistantEntities) {
-				const entities = this.pendingHomeAssistantEntities;
-				this.pendingHomeAssistantEntities = null;
-
-				this.synchronizeHomeAssistantServices(entities);
-			}
+			this.synchronizeHomeAssistantServices();
 
 			await this.homeAssistant.subscribeToEntities();
 
@@ -179,15 +174,14 @@ export class Domo {
 	}
 
 	private handleHomeAssistantStatesUpdate(entities: HassEntities): void {
-		if (!this.homeAssistantRegistryReady) {
-			this.pendingHomeAssistantEntities = entities;
-			return;
-		}
-
-		this.synchronizeHomeAssistantServices(entities);
+		this.latestHomeAssistantEntities = entities;
+		this.synchronizeHomeAssistantServices();
 	}
 
-	private synchronizeHomeAssistantServices(entities: HassEntities): void {
+	public synchronizeHomeAssistantServices(): void {
+		const entities = this.latestHomeAssistantEntities;
+		if (!entities || !this.homeAssistantRegistryReady) return;
+
 		const updatedServices = this.homeAssistantServices.filter((service) =>
 			service.synchronize(entities),
 		);
@@ -197,7 +191,6 @@ export class Domo {
 		}
 
 		const snapshots: Record<string, DomoServiceSnapshot> = {};
-
 		updatedServices.forEach((service) => {
 			snapshots[service.eventName] = service.getSnapshot();
 		});

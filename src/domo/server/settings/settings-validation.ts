@@ -11,5 +11,4 @@ export const findSettingByKeyInputSchema = z.object({
 
 export const saveSettingsInputSchema = z.array(settingSchema).max(100);
 
-export type Setting = z.infer<typeof settingSchema>;
 export type SaveSettingsInput = z.infer<typeof saveSettingsInputSchema>;
