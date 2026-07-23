@@ -8,18 +8,18 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { RefreshCwIcon } from "lucide-react";
-import { Button, Card, addMinutes, cn } from "shanty-ui";
+import { Button, Card, cn } from "shanty-ui";
 
 import { restartDomo } from "#/server/domo-functions";
 import { QueryLoader } from "@/components/query-loader";
 import { RollingNumber } from "@/components/rolling-number";
 import { RollingTime } from "@/components/rolling-time";
-import { SunPhaseIcon } from "@/components/sun-phase-icon";
 import { useRooms } from "@/features/architect/use-rooms";
 import { useCar } from "@/features/car/use-car";
 import { useClock } from "@/features/clock/use-clock";
 import { useEnvironmentSensors } from "@/features/environment/use-environment-sensors";
 import { useLightBulbs } from "@/features/lighting/use-light-bulbs";
+import { useWeather } from "@/features/weather/use-weather";
 
 function AppTopBar() {
 	return (
@@ -27,6 +27,7 @@ function AppTopBar() {
 			<Card className="flex-1" size="xs">
 				<Card.Body>
 					<div className="flex items-center justify-between gap-x-8 divide-red-500 divide-solid">
+						<Weather />
 						<DateTime />
 						<Lights />
 						<Environment />
@@ -54,9 +55,9 @@ function DateTime() {
 
 	return (
 		<div className="flex items-center gap-x-1">
-			<span className="text-energy">
+			{/* <span className="text-energy">
 				<SunPhaseIcon />
-			</span>
+			</span> */}
 			<div className="text-heading text-center">
 				{now.toLocaleDateString("fr-FR", {
 					weekday: "short",
@@ -176,8 +177,6 @@ function Car() {
 
 	if (!car) return null;
 
-	const chargedAt = addMinutes(new Date(), car.remainingChargeTime);
-
 	return (
 		<div className="flex items-center gap-x-2">
 			<img src="/renault_4_small.png" alt="Renault 4" className="h-6 w-auto" />
@@ -205,6 +204,22 @@ function Car() {
 						</span>
 					</div>
 				</div>
+			</div>
+		</div>
+	);
+}
+
+function Weather() {
+	const weather = useWeather();
+	console.log({ weather });
+
+	if (!weather) return null;
+
+	return (
+		<div className="">
+			<div className="">
+				<span className="text-metric font-semibold">{weather.temperature}</span>
+				<span className="text-muted">{weather.temperatureUnitOfMeasurement}</span>
 			</div>
 		</div>
 	);

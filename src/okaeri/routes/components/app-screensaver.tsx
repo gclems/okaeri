@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { RollingTime } from "@/components/rolling-time";
 import { useClock } from "@/features/clock/use-clock";
 
-const INACTIVITY_DELAY = 30_000;
+const INACTIVITY_DELAY = 120_000;
 
 function ScreensaverClock() {
 	const now = useClock();

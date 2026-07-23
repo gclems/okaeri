@@ -5,7 +5,7 @@ import type { HomeAssistantClient } from "#/server/home-assistant-client";
 import type { HomeAssistantRegistryService } from "#/server/home-assistant-registry/home-assistant-registry-service";
 import { HomeAssistantService } from "#/server/home-assistant-service";
 import { findSettingByKey } from "#/server/settings/settings-service";
-import type { Car, DomoCarSnapshot } from "#/shared/car-types";
+import type { DomoCarSnapshot } from "#/shared/car-types";
 
 export type CarListener = (snapshot: DomoCarSnapshot) => void;
 
@@ -15,14 +15,6 @@ export class CarService extends HomeAssistantService<DomoCarSnapshot> {
 		registry: HomeAssistantRegistryService,
 	) {
 		super("car", homeAssistant, registry);
-	}
-
-	public getSnapshot(): DomoCarSnapshot {
-		return this.snapshot;
-	}
-
-	public getCar(): Car | null {
-		return this.snapshot.car;
 	}
 
 	public carSettingChanged(): void {

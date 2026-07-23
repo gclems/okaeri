@@ -11,6 +11,7 @@ import { HomeAssistantRegistryService } from "#/server/home-assistant-registry/h
 import type { HomeAssistantSynchronizable } from "#/server/home-assistant-service";
 import { LightingService } from "#/server/lighting/lighting-service";
 import { SunService } from "#/server/sun/sun-service";
+import { WeatherService } from "#/server/weather/weather-service";
 import type { DomoSnapshot } from "#/shared/home-assistant-types";
 
 export type DomoListener = (snapshot: DomoSnapshot) => void;
@@ -65,6 +66,7 @@ export class Domo {
 			new LightingService(this.homeAssistant, this.homeAssistantRegistry),
 			new EnvironmentService(this.homeAssistant, this.homeAssistantRegistry),
 			new CarService(this.homeAssistant, this.homeAssistantRegistry),
+			new WeatherService(this.homeAssistant, this.homeAssistantRegistry),
 		];
 
 		this.sun = new SunService();

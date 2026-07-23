@@ -1,5 +1,5 @@
-import type { MetNoSun } from "#/interfaces/metno";
 import { getDomoServerConfig } from "#/server/config";
+import type { MetNoSun } from "#/server/sun/sun-mapper";
 
 export async function fetchSun(date: Date): Promise<MetNoSun> {
 	const domoConfig = getDomoServerConfig();

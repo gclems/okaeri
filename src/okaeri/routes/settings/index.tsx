@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
@@ -43,6 +45,7 @@ function RouteComponent() {
 
 const formSchema = z.object({
 	car_device_id: z.string().trim().max(100).nullable().optional(),
+	weather_device_id: z.string().trim().max(100).nullable().optional(),
 });
 
 type FormType = z.infer<typeof formSchema>;
@@ -73,6 +76,7 @@ function SettingsForm({
 	const form = useForm<FormType>({
 		defaultValues: {
 			car_device_id: byKey.car_device_id?.value ?? null,
+			weather_device_id: byKey.weather_device_id?.value ?? null,
 		},
 		resolver: zodResolver(formSchema),
 	});
@@ -99,9 +103,20 @@ function SettingsForm({
 	});
 
 	const carValue = form.watch("car_device_id");
-	const selectedCarOption = carValue
-		? devicesOptions.find((option) => option.value === carValue)
-		: null;
+	const weatherValue = form.watch("weather_device_id");
+
+	const selectedCarOption = useMemo(
+		() =>
+			carValue ? devicesOptions.find((option) => option.value === carValue) : null,
+		[carValue, devicesOptions],
+	);
+	const selectedWeatherOption = useMemo(
+		() =>
+			weatherValue
+				? devicesOptions.find((option) => option.value === weatherValue)
+				: null,
+		[weatherValue, devicesOptions],
+	);
 
 	return (
 		<form onSubmit={form.handleSubmit(handleSubmit)}>
@@ -118,6 +133,22 @@ function SettingsForm({
 							value={selectedCarOption}
 							onValueChange={(value) => {
 								form.setValue("car_device_id", value);
+							}}
+						/>
+					</div>
+				</Fieldset>
+				<Fieldset legend="Météo">
+					<div className="flex items-center gap-x-4">
+						<Label htmlFor="weather_device_id" className="shrink-0">
+							Appareil Home Assistant
+						</Label>
+						<Select
+							id="weather_device_id"
+							{...form.register("weather_device_id")}
+							items={devicesOptions}
+							value={selectedWeatherOption}
+							onValueChange={(value) => {
+								form.setValue("weather_device_id", value);
 							}}
 						/>
 					</div>
